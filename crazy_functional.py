@@ -2,6 +2,7 @@ from toolbox import HotReload  # HotReload 的意思是热更新，修改函数�
 from toolbox import trimmed_format_exc
 from loguru import logger
 
+
 def get_crazy_functions():
     from crazy_functions.读文章写摘要 import 读文章写摘要
     from crazy_functions.生成函数注释 import 批量生成函数注释
@@ -105,7 +106,7 @@ def get_crazy_functions():
             "Group": "对话",
             "Color": "stop",
             "AsButton": False,
-            "Info" : "基于当前对话或文件生成多种Mermaid图表,图表类型由模型判断",
+            "Info": "基于当前对话或文件生成多种Mermaid图表,图表类型由模型判断",
             "Function": None,
             "Class": Mermaid_Gen
         },
@@ -115,7 +116,7 @@ def get_crazy_functions():
             "AsButton": True,
             "Info": "Arixv论文精细翻译 | 输入参数arxiv论文的ID，比如1812.10695",
             "Function": HotReload(Latex翻译中文并重新编译PDF),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
-            "Class": Arxiv_Localize,    # 新一代插件需要注册Class
+            "Class": Arxiv_Localize,  # 新一代插件需要注册Class
         },
         "批量总结Word文档": {
             "Group": "学术",
@@ -229,8 +230,8 @@ def get_crazy_functions():
             "Color": "stop",
             "AsButton": True,
             "Info": "保存当前的对话 | 不需要输入参数",
-            "Function": HotReload(对话历史存档),    # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
-            "Class": Conversation_To_File_Wrap     # 新一代插件需要注册Class
+            "Function": HotReload(对话历史存档),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
+            "Class": Conversation_To_File_Wrap  # 新一代插件需要注册Class
         },
         "[多线程Demo]解析此项目本身（源码自译解）": {
             "Group": "对话|编程",
@@ -245,7 +246,7 @@ def get_crazy_functions():
             "AsButton": True,  # 加入下拉菜单中
             # "Info": "连接网络回答问题（需要访问谷歌）| 输入参数是一个问题",
             "Function": HotReload(连接网络回答问题),
-            "Class": NetworkGPT_Wrap     # 新一代插件需要注册Class
+            "Class": NetworkGPT_Wrap  # 新一代插件需要注册Class
         },
         "历史上的今天": {
             "Group": "对话",
@@ -253,14 +254,14 @@ def get_crazy_functions():
             "AsButton": False,
             "Info": "查看历史上的今天事件 (这是一个面向开发者的插件Demo) | 不需要输入参数",
             "Function": None,
-            "Class": Demo_Wrap, # 新一代插件需要注册Class
+            "Class": Demo_Wrap,  # 新一代插件需要注册Class
         },
         "精准翻译PDF论文": {
             "Group": "学术",
             "Color": "stop",
             "AsButton": True,
             "Info": "精准翻译PDF论文为中文 | 输入参数为路径",
-            "Function": HotReload(批量翻译PDF文档), # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
+            "Function": HotReload(批量翻译PDF文档),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
             "Class": PDF_Tran,  # 新一代插件需要注册Class
         },
         "询问多个GPT模型": {
@@ -354,7 +355,7 @@ def get_crazy_functions():
                             r'If the term "agent" is used in this section, it should be translated to "智能体". ',
             "Info": "Arixv论文精细翻译 | 输入参数arxiv论文的ID，比如1812.10695",
             "Function": HotReload(Latex翻译中文并重新编译PDF),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
-            "Class": Arxiv_Localize,    # 新一代插件需要注册Class
+            "Class": Arxiv_Localize,  # 新一代插件需要注册Class
         },
         "📚本地Latex论文精细翻译（上传Latex项目）[需Latex]": {
             "Group": "学术",
@@ -376,8 +377,8 @@ def get_crazy_functions():
                             r"例如当单词'agent'翻译不准确时, 请尝试把以下指令复制到高级参数区: "
                             r'If the term "agent" is used in this section, it should be translated to "智能体". ',
             "Info": "PDF翻译中文，并重新编译PDF | 输入参数为路径",
-            "Function": HotReload(PDF翻译中文并重新编译PDF),   # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
-            "Class": PDF_Localize   # 新一代插件需要注册Class
+            "Function": HotReload(PDF翻译中文并重新编译PDF),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
+            "Class": PDF_Localize  # 新一代插件需要注册Class
         }
     }
 
@@ -388,7 +389,7 @@ def get_crazy_functions():
                 "Color": "stop",
                 "AsButton": False,
                 "Info": "使用 DALLE2/DALLE3 生成图片 | 输入参数字符串，提供图像的内容",
-                "Function": HotReload(图片生成_DALLE2),   # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
+                "Function": HotReload(图片生成_DALLE2),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
                 "Class": ImageGen_Wrap  # 新一代插件需要注册Class
             },
         }
@@ -406,14 +407,6 @@ def get_crazy_functions():
             },
         }
     )
-
-
-
-
-
-
-
-
 
     # -=--=- 尚未充分测试的实验性插件 & 需要额外依赖的插件 -=--=-
     try:
@@ -475,7 +468,8 @@ def get_crazy_functions():
                     "Color": "stop",
                     "AsButton": False,
                     "AdvancedArgs": True,  # 调用时，唤起高级参数输入区（默认False）
-                    "ArgsReminder": '输入时用逗号隔开, *代表通配符, 加了^代表不匹配; 不输入代表全部匹配。例如: "*.c, ^*.cpp, config.toml, ^*.toml"',  # 高级参数输入区的显示提示
+                    "ArgsReminder": '输入时用逗号隔开, *代表通配符, 加了^代表不匹配; 不输入代表全部匹配。例如: "*.c, ^*.cpp, config.toml, ^*.toml"',
+                    # 高级参数输入区的显示提示
                     "Function": HotReload(解析任意code项目),
                 },
             }
@@ -502,8 +496,6 @@ def get_crazy_functions():
     except:
         logger.error(trimmed_format_exc())
         logger.error("Load function plugin failed")
-
-
 
     try:
         from crazy_functions.总结音视频 import 总结音视频
@@ -617,7 +609,6 @@ def get_crazy_functions():
         logger.error(trimmed_format_exc())
         logger.error("Load function plugin failed")
 
-
     try:
         from toolbox import get_conf
 
@@ -726,6 +717,23 @@ def get_crazy_functions():
         logger.error(trimmed_format_exc())
         logger.error("Load function plugin failed")
 
+    try:
+        from crazy_functions.PDF_Convert import 解析PDF文档
+
+        function_plugins.update({
+            "解析PDF到md（MinerU）": {
+                "Group": "学术",
+                "Color": "stop",
+                "AsButton": False,
+                "AdvancedArgs": True,
+                "ArgsReminder": "请输入Conda环境名称，默认为“MinerU”",
+                "Info": "上传PDF，并转换为Markdown | 输入参数为Anaconda环境名称",
+                "Function": HotReload(解析PDF文档),
+            }
+        })
+    except:
+        logger.error(trimmed_format_exc())
+        logger.error("Load function plugin failed")
 
     # try:
     #     from crazy_functions.高级功能函数模板 import 测试图表渲染
@@ -740,7 +748,6 @@ def get_crazy_functions():
     # except:
     #     logger.error(trimmed_format_exc())
     #     print('Load function plugin failed')
-
 
     """
     设置默认值:
@@ -762,8 +769,6 @@ def get_crazy_functions():
     return function_plugins
 
 
-
-
 def get_multiplex_button_functions():
     """多路复用主提交按钮的功能映射
     """
@@ -771,12 +776,12 @@ def get_multiplex_button_functions():
         "常规对话":
             "",
 
-        "多模型对话": 
-            "询问多个GPT模型", # 映射到上面的 `询问多个GPT模型` 插件
+        "多模型对话":
+            "询问多个GPT模型",  # 映射到上面的 `询问多个GPT模型` 插件
 
-        "智能召回 RAG": 
-            "Rag智能召回", # 映射到上面的 `Rag智能召回` 插件
+        "智能召回 RAG":
+            "Rag智能召回",  # 映射到上面的 `Rag智能召回` 插件
 
-        "多媒体查询": 
-            "多媒体智能体", # 映射到上面的 `多媒体智能体` 插件
+        "多媒体查询":
+            "多媒体智能体",  # 映射到上面的 `多媒体智能体` 插件
     }

@@ -632,6 +632,119 @@ class nougat_interface():
         return res[0]
 
 
+@Singleton
+class mineru_interface():
+    def __init__(self):
+        self.threadLock = threading.Lock()
+
+    def mineru_with_timeout(self, command, cwd, timeout=3600):
+        import subprocess
+        from toolbox import ProxyNetworkActivate
+
+        try:
+            with ProxyNetworkActivate("MinerU"):
+                process = subprocess.Popen(
+                    command,
+                    shell=True,
+                    cwd=cwd,
+                    env=os.environ,
+                    executable="/bin/bash"  # 指定使用 Bash 执行命令
+                )
+                stdout, stderr = process.communicate(timeout=timeout)
+
+        except subprocess.TimeoutExpired:
+            process.kill()
+            stdout, stderr = process.communicate()
+            logger.error("Process timed out!")
+            return False
+
+        # 检查返回码
+        if process.returncode != 0:
+            logger.error(f"Command failed with return code {process.returncode}: {stderr.decode()}")
+            return False
+        return True
+
+    def compress_to_zip(self, dst):
+        """
+        将指定路径 dst 压缩为 zip 文件，并返回压缩文件的路径。
+        """
+        import shutil
+        from pathlib import Path
+
+        dst_path = Path(dst).resolve()  # 解析为绝对路径
+        dst_parent = dst_path.parent  # 父目录
+        dst_name = dst_path.name  # 目录名
+
+        # 设置压缩文件存储路径（与 dst 的父目录相同）
+        zip_path = dst_parent / f"{dst_name}.zip"
+        shutil.make_archive(base_name=str(zip_path.with_suffix('')),
+                            format='zip',
+                            root_dir=str(dst_path))
+
+        return str(zip_path)
+
+    def get_conda_activate_command(self):
+        # 构造激活 Conda 环境的命令
+        conda_prefix = os.environ.get("CONDA_PREFIX")
+        conda_path_split = conda_prefix.split('/')
+        conda_base_path = '/'.join(conda_path_split[:4])
+
+        import platform
+        # 检测操作系统
+        system = platform.system()
+        if system == "Windows":
+            # Windows 下的 conda 初始化脚本
+            conda_init = os.path.join(conda_base_path, "condabin", "conda.bat")
+            if not os.path.exists(conda_init):
+                self.threadLock.release()
+                raise FileNotFoundError(f"找不到 conda 初始化脚本: {conda_init}")
+            activate_command = f'call "{conda_init}" activate '
+        else:
+            # Linux/Mac 下的 conda 初始化脚本
+            conda_init = os.path.join(conda_base_path, "etc", "profile.d", "conda.sh")
+            if not os.path.exists(conda_init):
+                self.threadLock.release()
+                raise FileNotFoundError(f"找不到 conda 初始化脚本: {conda_init}")
+            activate_command = f"source {conda_init} && conda activate "
+        return activate_command
+
+    def mineru_parse_pdf(self, fp, chatbot, history, conda_env):
+        from toolbox import update_ui_lastest_msg
+
+        yield from update_ui_lastest_msg("正在解析论文, 请稍候。进度：正在排队, 等待线程锁...",
+                                         chatbot=chatbot, history=history, delay=0)
+        self.threadLock.acquire()
+        import glob, threading, os
+        from toolbox import get_log_folder, gen_time_str
+        dst = os.path.join(get_log_folder(plugin_name='mineru'), gen_time_str())
+        os.makedirs(dst)
+
+        yield from update_ui_lastest_msg("正在解析论文, 请稍候。进度：正在加载MinerU... ",
+                                         chatbot=chatbot, history=history, delay=0)
+        command = ['magic-pdf', '-p', os.path.abspath(fp), '-o', os.path.abspath(dst), ]
+        import shlex
+        # 确保命令中的参数安全（转义空格等特殊字符）
+        safe_command = ' '.join([shlex.quote(arg) for arg in command])
+        yield from update_ui_lastest_msg(f"正在执行命令 {safe_command} 在 Conda 环境 '{conda_env}' 中。",
+                                         chatbot=chatbot, history=history, delay=0)
+        activate_command = self.get_conda_activate_command()
+        activate_command += f"{conda_env} && CUDA_VISIBLE_DEVICES=0 {safe_command}"
+        logger.info(f"正在执行命令 {activate_command}")
+
+        self.mineru_with_timeout(activate_command, cwd=os.getcwd(), timeout=3600)
+        pdf_name = os.path.basename(fp)
+        # 去掉后缀
+        name_without_ext = os.path.splitext(pdf_name)[0]
+        new_dst_dir = os.path.join(dst, name_without_ext)
+
+        res = glob.glob(os.path.join(new_dst_dir, 'auto', '*.md'))
+        if len(res) == 0:
+            self.threadLock.release()
+            raise RuntimeError("MinerU解析论文失败。")
+        self.threadLock.release()
+        md_path = res[0]
+        zip_path = self.compress_to_zip(new_dst_dir)
+        return md_path, zip_path
 
 
 def try_install_deps(deps, reload_m=[]):
