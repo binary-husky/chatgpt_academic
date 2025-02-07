@@ -117,6 +117,9 @@ AVAIL_FONTS = [
 # 默认的系统提示词（system prompt）
 INIT_SYS_PROMPT = "Serve me as a writing and programming assistant."
 
+# 任务失败时默认重试的次数
+RETRY_TIMES_AT_UNKNOWN_ERROR = 3
+
 
 # 对话窗的高度 （仅在LAYOUT="TOP-DOWN"时生效）
 CHATBOT_HEIGHT = 1115
