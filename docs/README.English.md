@@ -8,9 +8,17 @@
 > 2023.11.7: When installing dependencies, please select the **specified versions** in the `requirements.txt` file. Installation command: `pip install -r requirements.txt`.
 
 
-# <div align=center><img src="logo.png" width="40"> GPT Academic Optimization</div>
+# <div align=center><img src="logo.png" width="40"> GPT Academic</div>
 
-**If you like this project, please give it a Star.**
+<div align="center">
+    
+[简体中文](README.md) | **English** | [日本語](docs/README.Japanese.md) | [한국어](docs/README.Korean.md) | [Русский](docs/README.Russian.md) | [Français](docs/README.French.md)
+
+</div>
+
+
+**If you like this project, please give it a ⭐. If you have invented useful shortcut keys or plugins, please feel free to send Pull Requests!**
+
 To translate this project to arbitrary language with GPT, read and run [`multi_language.py`](multi_language.py) (experimental).
 
 > **Note**
@@ -28,7 +36,7 @@ To translate this project to arbitrary language with GPT, read and run [`multi_l
 
 Feature (⭐ = Recently Added) | Description
 --- | ---
-⭐[Integrate New Models](https://github.com/binary-husky/gpt_academic/wiki/%E5%A6%82%E4%BD%95%E5%88%87%E6%8D%A2%E6%A8%A1%E5%9E%8B) | Baidu [Qianfan](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Nlks5zkzu) and Wenxin Yiyu, [Tongyi Qianwen](https://modelscope.cn/models/qwen/Qwen-7B-Chat/summary), Shanghai AI-Lab [Shusheng](https://github.com/InternLM/InternLM), Xunfei [Xinghuo](https://xinghuo.xfyun.cn/), [LLaMa2](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf), Zhifu API, DALLE3
+⭐[Integrate New Models](https://github.com/binary-husky/gpt_academic/wiki/%E5%A6%82%E4%BD%95%E5%88%87%E6%8D%A2%E6%A8%A1%E5%9E%8B) | Baidu [Qianfan](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Nlks5zkzu) and Wenxin Yiyan, [Tongyi Qianwen](https://modelscope.cn/models/qwen/Qwen-7B-Chat/summary), Shanghai AI-Lab [Shusheng](https://github.com/InternLM/InternLM), Xunfei [Xinghuo](https://xinghuo.xfyun.cn/), [LLaMa2](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf), Zhifu API, DALLE3
 Proofreading, Translation, Code Explanation | One-click proofreading, translation, searching for grammar errors in papers, explaining code
 [Custom Shortcuts](https://www.bilibili.com/video/BV14s4y1E7jN) | Support for custom shortcuts
 Modular Design | Support for powerful [plugins](https://github.com/binary-husky/gpt_academic/tree/master/crazy_functions), plugins support [hot updates](https://github.com/binary-husky/gpt_academic/wiki/%E5%87%BD%E6%95%B0%E6%8F%92%E4%BB%B6%E6%8C%87%E5%8D%97)
