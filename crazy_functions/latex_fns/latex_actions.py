@@ -16,7 +16,7 @@ from crazy_functions.latex_fns.latex_pickle_io import objdump, objload
 pj = os.path.join
 
 
-def split_subprocess(txt, project_folder, return_dict, opts):
+def split_subprocess(txt: str, project_folder: str, return_dict, opts):
     """
     break down latex file to a linked list,
     each node use a preserve flag to indicate whether it should
@@ -30,26 +30,24 @@ def split_subprocess(txt, project_folder, return_dict, opts):
     text, mask = set_forbidden_text(text, mask, r"^(.*?)\\begin{document}", re.DOTALL)
     # 吸收iffalse注释
     text, mask = set_forbidden_text(text, mask, r"\\iffalse(.*?)\\fi", re.DOTALL)
-    # 吸收在42行以内的begin-end组合
-    text, mask = set_forbidden_text_begin_end(text, mask, r"\\begin\{([a-z\*]*)\}(.*?)\\end\{\1\}", re.DOTALL, limit_n_lines=42)
+    # 吸收在42行以内的begin-end组合 (为什么要吸收啊... 我的theorem基本都被剔除了)
+    # text, mask = set_forbidden_text_begin_end(text, mask, r"\\begin\{([a-z\*]*)\}(.*?)\\end\{\1\}", re.DOTALL, limit_n_lines=42)
     # 吸收匿名公式
     text, mask = set_forbidden_text(text, mask, [ r"\$\$([^$]+)\$\$",  r"\\\[.*?\\\]" ], re.DOTALL)
     # 吸收其他杂项
-    text, mask = set_forbidden_text(text, mask, [ r"\\section\{(.*?)\}", r"\\section\*\{(.*?)\}", r"\\subsection\{(.*?)\}", r"\\subsubsection\{(.*?)\}" ])
+    text, mask = set_forbidden_text(text, mask, [ r"\\section\*?\{(.*?)\}", r"\\subsection\{(.*?)\}", r"\\subsubsection\{(.*?)\}" ])
     text, mask = set_forbidden_text(text, mask, [ r"\\bibliography\{(.*?)\}", r"\\bibliographystyle\{(.*?)\}" ])
-    text, mask = set_forbidden_text(text, mask, r"\\begin\{thebibliography\}.*?\\end\{thebibliography\}", re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, r"\\begin\{lstlisting\}(.*?)\\end\{lstlisting\}", re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, r"\\begin\{wraptable\}(.*?)\\end\{wraptable\}", re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, r"\\begin\{algorithm\}(.*?)\\end\{algorithm\}", re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, [r"\\begin\{wrapfigure\}(.*?)\\end\{wrapfigure\}", r"\\begin\{wrapfigure\*\}(.*?)\\end\{wrapfigure\*\}"], re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, [r"\\begin\{figure\}(.*?)\\end\{figure\}", r"\\begin\{figure\*\}(.*?)\\end\{figure\*\}"], re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, [r"\\begin\{multline\}(.*?)\\end\{multline\}", r"\\begin\{multline\*\}(.*?)\\end\{multline\*\}"], re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, [r"\\begin\{table\}(.*?)\\end\{table\}", r"\\begin\{table\*\}(.*?)\\end\{table\*\}"], re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, [r"\\begin\{minipage\}(.*?)\\end\{minipage\}", r"\\begin\{minipage\*\}(.*?)\\end\{minipage\*\}"], re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, [r"\\begin\{align\*\}(.*?)\\end\{align\*\}", r"\\begin\{align\}(.*?)\\end\{align\}"], re.DOTALL)
-    text, mask = set_forbidden_text(text, mask, [r"\\begin\{equation\}(.*?)\\end\{equation\}", r"\\begin\{equation\*\}(.*?)\\end\{equation\*\}"], re.DOTALL)
+    for environment in [
+        "thebibliography", 
+        "wraptable", "table", "tabular",
+        "wrapfigure", "figure", "tikzpicture",
+        "lstlisting", "algorithm", "algorithmic", 
+        "multline", "align", "equation",
+        "minipage", 
+    ]:
+        text, mask = set_forbidden_text(text, mask, rf"\\begin\{{({environment}\*?)\}}(.*?)\\end\{{\1\}}", re.DOTALL)
     text, mask = set_forbidden_text(text, mask, [r"\\includepdf\[(.*?)\]\{(.*?)\}", r"\\clearpage", r"\\newpage", r"\\appendix", r"\\tableofcontents", r"\\include\{(.*?)\}"])
-    text, mask = set_forbidden_text(text, mask, [r"\\vspace\{(.*?)\}", r"\\hspace\{(.*?)\}", r"\\label\{(.*?)\}", r"\\begin\{(.*?)\}", r"\\end\{(.*?)\}", r"\\item "])
+    text, mask = set_forbidden_text(text, mask, [r"\\vspace\{(.*?)\}", r"\\hspace\{(.*?)\}", r"\\label\{(.*?)\}", r"\\begin\{(.*?)\}", r"\\end\{(.*?)\}", r"\\item\s?"])
     text, mask = set_forbidden_text_careful_brace(text, mask, r"\\hl\{(.*?)\}", re.DOTALL)
     # reverse 操作必须放在最后
     text, mask = reverse_forbidden_text_careful_brace(text, mask, r"\\caption\{(.*?)\}", re.DOTALL, forbid_wrapper=True)
@@ -92,18 +90,26 @@ class LatexPaperSplit():
         self.msg = "*{\\scriptsize\\textbf{警告：该PDF由GPT-Academic开源项目调用大语言模型+Latex翻译插件一键生成，" + \
             "版权归原文作者所有。翻译内容可靠性无保障，请仔细鉴别并以原文为准。" + \
             "项目Github地址 \\url{https://github.com/binary-husky/gpt_academic/}。"
-        # 请您不要删除或修改这行警告，除非您是论文的原作者（如果您是论文原作者，欢迎加REAME中的QQ联系开发者）
+        # 请您不要删除或修改这行警告，除非您是论文的原作者（如果您是论文原作者，欢迎加README中的QQ联系开发者）
         self.msg_declare = "为了防止大语言模型的意外谬误产生扩散影响，禁止移除或修改此警告。}}\\\\"
         self.title = "unknown"
         self.abstract = "unknown"
 
-    def read_title_and_abstract(self, txt):
+    def shrink_spaces(self, text: str):
+        """删除空白字符 包含\\n, \\\\, \\t, 空格
+        
+        残存BUG: 未考虑\\\\[length]"""
+        text = text.replace('\\\\', ' ')
+        pattern = re.compile(r'\s+')
+        return re.sub(pattern, ' ', text)
+
+    def read_title_and_abstract(self, txt: str):
         try:
             title, abstract = find_title_and_abs(txt)
             if title is not None:
-                self.title = title.replace('\n', ' ').replace('\\\\', ' ').replace('  ', '').replace('  ', '')
+                self.title = self.shrink_spaces(title)
             if abstract is not None:
-                self.abstract = abstract.replace('\n', ' ').replace('\\\\', ' ').replace('  ', '').replace('  ', '')
+                self.abstract = self.shrink_spaces(abstract)
         except:
             pass
 
@@ -147,7 +153,7 @@ class LatexPaperSplit():
         return result_string
 
 
-    def split(self, txt, project_folder, opts):
+    def split(self, txt: str, project_folder: str, opts: list):
         """
         break down latex file to a linked list,
         each node use a preserve flag to indicate whether it should
@@ -215,7 +221,7 @@ class LatexPaperFileGroup():
         return manifest
 
 
-def Latex精细分解与转化(file_manifest, project_folder, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, mode='proofread', switch_prompt=None, opts=[]):
+def Latex精细分解与转化(file_manifest: list[str], project_folder: str, llm_kwargs: dict[str,str], plugin_kwargs: dict[str,str], chatbot, history:list[str], system_prompt, mode='proofread', switch_prompt=None, opts=[]):
     import time, os, re
     from ..crazy_utils import request_gpt_model_multi_threads_with_very_awesome_ui_and_high_efficiency
     from .latex_actions import LatexPaperFileGroup, LatexPaperSplit

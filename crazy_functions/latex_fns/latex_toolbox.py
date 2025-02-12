@@ -153,9 +153,9 @@ Latex segmentation with a binary mask (PRESERVE=0, TRANSFORM=1)
 def set_forbidden_text(text, mask, pattern, flags=0):
     """
     Add a preserve text area in this paper
-    e.g. with pattern = r"\\begin\{algorithm\}(.*?)\\end\{algorithm\}"
+    e.g. with pattern = r"\\begin\\{algorithm\\}(.*?)\\end\\{algorithm\\}"
     you can mask out (mask = PRESERVE so that text become untouchable for GPT)
-    everything between "\begin{equation}" and "\end{equation}"
+    everything between "\\begin{equation}" and "\\end{equation}"
     """
     if isinstance(pattern, list):
         pattern = "|".join(pattern)
@@ -331,18 +331,59 @@ def find_main_tex_file(file_manifest, mode):
         return canidates[select]
 
 
-def rm_comments(main_file):
-    new_file_remove_comment_lines = []
-    for l in main_file.splitlines():
-        # 删除整行的空注释
-        if l.lstrip().startswith("%"):
-            pass
-        else:
-            new_file_remove_comment_lines.append(l)
-    main_file = "\n".join(new_file_remove_comment_lines)
-    # main_file = re.sub(r"\\include{(.*?)}", r"\\input{\1}", main_file)  # 将 \include 命令转换为 \input 命令
-    main_file = re.sub(r"(?<!\\)%.*", "", main_file)  # 使用正则表达式查找半行注释, 并替换为空字符串
-    return main_file
+def rm_comments_inline(content: str):
+    """删除掉所有行内注释"""
+    pattern = re.compile(r"(?<!\\)%.*\n[ \t\r\f\v]*")
+    return re.sub(pattern, "", content)
+
+
+def rm_comments_block(content: str):
+    """删除掉所有块注释"""
+    stack: list[int] = []
+    output: list[str] = []
+    pos = 0
+    len_text = len(content)
+    pattern = re.compile(r"\\begin\{comment\}|\\end\{comment\}")
+
+    for match in pattern.finditer(content):
+        start, end = match.start(), match.end()
+        tag = match.group()
+
+        # 记录非注释内容
+        if not stack:
+            output.append(content[pos:start])
+
+        # 处理标签
+        if tag == r"\begin{comment}":
+            stack.append(end)  # 记录起始位置
+        else:  # \end{comment}
+            if stack:
+                stack.pop()  # 弹出匹配的\begin{comment}
+            else:
+                raise ValueError("\\end{comment}没有匹配的\\begin{comment}")
+
+        pos = end
+
+    # 添加最后一段内容（如果存在）
+    if stack:
+        raise ValueError("\\begin{comment}没有匹配的\\end{comment}")
+    elif pos < len_text:
+        output.append(content[pos:])
+
+    return "".join(output)
+
+
+def rm_comments(main_file: str):
+    """删除掉所有注释
+
+    TeX文件有数种注释:
+    - % 注释: 删除本行%后所有内容, 删除回车, 删除下一行缩进
+    - \\iffalse ... \\fi 注释: 呃, 删不动... (主要是可能的嵌套问题)
+    - \\begin{comment} ... \\end{comment} 注释: 删除所有内容
+
+    残存BUG: 未考虑 % 在verbatim环境中出现的情况
+    """
+    return rm_comments_block(rm_comments_inline(main_file))
 
 
 def find_tex_file_ignore_case(fp):
