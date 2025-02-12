@@ -275,7 +275,7 @@ def start_app(app_block, CONCURRENT_COUNT, AUTHENTICATION, PORT, SSL_KEYFILE, SS
     # --- --- uvicorn.Config --- ---
     ssl_keyfile = None if SSL_KEYFILE == "" else SSL_KEYFILE
     ssl_certfile = None if SSL_CERTFILE == "" else SSL_CERTFILE
-    server_name = "0.0.0.0"
+    server_name = None
     config = uvicorn.Config(
         fastapi_app,
         host=server_name,
@@ -286,7 +286,7 @@ def start_app(app_block, CONCURRENT_COUNT, AUTHENTICATION, PORT, SSL_KEYFILE, SS
         ssl_certfile=ssl_certfile,
     )
     server = Server(config)
-    url_host_name = "localhost" if server_name == "0.0.0.0" else server_name
+    url_host_name = "localhost" if server_name is None else server_name
     if ssl_keyfile is not None:
         if ssl_certfile is None:
             raise ValueError(
