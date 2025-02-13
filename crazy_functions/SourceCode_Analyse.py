@@ -50,12 +50,18 @@ def 解析源代码新(file_manifest, project_folder, llm_kwargs, plugin_kwargs,
     yield from update_ui(chatbot=chatbot, history=history_to_return) # 刷新界面
 
     ############################## <第二步，综合，单线程，分组+迭代处理> ##################################
-    batchsize = 16  # 10个文件为一组
     report_part_2 = []
     previous_iteration_files = []
     last_iteration_result = ""
     while True:
         if len(file_manifest) == 0: break
+        batchsize = 16 # 每次最多处理的文件数量
+        if len(file_manifest) < batchsize: batchsize = len(file_manifest)
+        file_dir = os.path.dirname(file_manifest[0])
+        for num_file_manifest in range(batchsize):
+            if os.path.dirname(file_manifest[num_file_manifest]) != file_dir:
+                batchsize = num_file_manifest
+                break
         this_iteration_file_manifest = file_manifest[:batchsize]
         this_iteration_gpt_response_collection = gpt_response_collection[:batchsize*2]
         file_rel_path = [os.path.relpath(fp, project_folder) for index, fp in enumerate(this_iteration_file_manifest)]
