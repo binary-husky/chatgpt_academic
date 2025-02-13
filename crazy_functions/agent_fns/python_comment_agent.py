@@ -10,7 +10,7 @@ from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_
 # TODO: 解决缩进问题
 
 find_function_end_prompt = '''
-Below is a page of code that you need to read. This page may not yet complete, you job is to split this page to sperate functions, class functions etc.
+Below is a page of code that you need to read. This page may not yet complete, you job is to split this page to separate functions, class functions etc.
 - Provide the line number where the first visible function ends.
 - Provide the line number where the next visible function begins.
 - If there are no other functions in this page, you should simply return the line number of the last line.
@@ -59,7 +59,7 @@ OUTPUT:
 
 
 
-revise_funtion_prompt = '''
+revise_function_prompt = '''
 You need to read the following code, and revise the source code ({FILE_BASENAME}) according to following instructions:
 1. You should analyze the purpose of the functions (if there are any).
 2. You need to add docstring for the provided functions (if there are any).
@@ -117,7 +117,7 @@ def zip_result(folder):
 '''
 
 
-revise_funtion_prompt_chinese = '''
+revise_function_prompt_chinese = '''
 您需要阅读以下代码，并根据以下说明修订源代码({FILE_BASENAME}):
 1. 如果源代码中包含函数的话, 你应该分析给定函数实现了什么功能
 2. 如果源代码中包含函数的话, 你需要为函数添加docstring, docstring必须使用中文
@@ -188,9 +188,9 @@ class PythonCodeComment():
         self.language = language
         self.observe_window_update = observe_window_update
         if self.language == "chinese":
-            self.core_prompt = revise_funtion_prompt_chinese
+            self.core_prompt = revise_function_prompt_chinese
         else:
-            self.core_prompt = revise_funtion_prompt
+            self.core_prompt = revise_function_prompt
         self.path = None
         self.file_basename = None
         self.file_brief = ""
@@ -222,7 +222,7 @@ class PythonCodeComment():
             history=[],
             sys_prompt="",
             observe_window=[],
-            console_slience=True
+            console_silence=True
         )
 
         def extract_number(text):
@@ -316,7 +316,7 @@ class PythonCodeComment():
     def tag_code(self, fn, hint):
         code = fn
         _, n_indent = self.dedent(code)
-        indent_reminder = "" if n_indent == 0 else "(Reminder: as you can see, this piece of code has indent made up with {n_indent} whitespace, please preseve them in the OUTPUT.)"
+        indent_reminder = "" if n_indent == 0 else "(Reminder: as you can see, this piece of code has indent made up with {n_indent} whitespace, please preserve them in the OUTPUT.)"
         brief_reminder = "" if self.file_brief == "" else f"({self.file_basename} abstract: {self.file_brief})"
         hint_reminder = "" if hint is None else f"(Reminder: do not ignore or modify code such as `{hint}`, provide complete code in the OUTPUT.)"
         self.llm_kwargs['temperature'] = 0
@@ -333,7 +333,7 @@ class PythonCodeComment():
             history=[],
             sys_prompt="",
             observe_window=[],
-            console_slience=True
+            console_silence=True
         )
 
         def get_code_block(reply):
@@ -400,7 +400,7 @@ class PythonCodeComment():
         return revised
 
     def begin_comment_source_code(self, chatbot=None, history=None):
-        # from toolbox import update_ui_lastest_msg
+        # from toolbox import update_ui_latest_msg
         assert self.path is not None
         assert '.py' in self.path   # must be python source code
         # write_target = self.path + '.revised.py'
@@ -409,10 +409,10 @@ class PythonCodeComment():
         # with open(self.path + '.revised.py', 'w+', encoding='utf8') as f:
         while True:
             try:
-                # yield from update_ui_lastest_msg(f"({self.file_basename}) 正在读取下一段代码片段:\n", chatbot=chatbot, history=history, delay=0)
+                # yield from update_ui_latest_msg(f"({self.file_basename}) 正在读取下一段代码片段:\n", chatbot=chatbot, history=history, delay=0)
                 next_batch, line_no_start, line_no_end = self.get_next_batch()
                 self.observe_window_update(f"正在处理{self.file_basename} - {line_no_start}/{len(self.full_context)}\n")
-                # yield from update_ui_lastest_msg(f"({self.file_basename}) 处理代码片段:\n\n{next_batch}", chatbot=chatbot, history=history, delay=0)
+                # yield from update_ui_latest_msg(f"({self.file_basename}) 处理代码片段:\n\n{next_batch}", chatbot=chatbot, history=history, delay=0)
                 
                 hint = None
                 MAX_ATTEMPT = 2

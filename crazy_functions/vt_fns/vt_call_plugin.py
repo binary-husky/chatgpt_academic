@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List
-from toolbox import update_ui_lastest_msg, disable_auto_promotion
+from toolbox import update_ui_latest_msg, disable_auto_promotion
 from request_llms.bridge_all import predict_no_ui_long_connection
 from crazy_functions.json_fns.pydantic_io import GptJsonIO, JsonStringError
 import copy, json, pickle, os, sys, time
@@ -9,14 +9,14 @@ import copy, json, pickle, os, sys, time
 def read_avail_plugin_enum():
     from crazy_functional import get_crazy_functions
     plugin_arr = get_crazy_functions()
-    # remove plugins with out explaination
+    # remove plugins with out explanation
     plugin_arr = {k:v for k, v in plugin_arr.items() if ('Info' in v) and ('Function' in v)}
     plugin_arr_info = {"F_{:04d}".format(i):v["Info"] for i, v in enumerate(plugin_arr.values(), start=1)}
     plugin_arr_dict = {"F_{:04d}".format(i):v for i, v in enumerate(plugin_arr.values(), start=1)}
     plugin_arr_dict_parse = {"F_{:04d}".format(i):v for i, v in enumerate(plugin_arr.values(), start=1)}
     plugin_arr_dict_parse.update({f"F_{i}":v for i, v in enumerate(plugin_arr.values(), start=1)})
     prompt = json.dumps(plugin_arr_info, ensure_ascii=False, indent=2)
-    prompt = "\n\nThe defination of PluginEnum:\nPluginEnum=" + prompt
+    prompt = "\n\nThe definition of PluginEnum:\nPluginEnum=" + prompt
     return prompt, plugin_arr_dict, plugin_arr_dict_parse
 
 def wrap_code(txt):
@@ -55,7 +55,7 @@ def execute_plugin(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prom
         plugin_selection: str = Field(description="The most related plugin from one of the PluginEnum.", default="F_0000")
         reason_of_selection: str = Field(description="The reason why you should select this plugin.", default="This plugin satisfy user requirement most")
     # ⭐ ⭐ ⭐ 选择插件
-    yield from update_ui_lastest_msg(lastmsg=f"正在执行任务: {txt}\n\n查找可用插件中...", chatbot=chatbot, history=history, delay=0)
+    yield from update_ui_latest_msg(lastmsg=f"正在执行任务: {txt}\n\n查找可用插件中...", chatbot=chatbot, history=history, delay=0)
     gpt_json_io = GptJsonIO(Plugin)
     gpt_json_io.format_instructions = "The format of your output should be a json that can be parsed by json.loads.\n"
     gpt_json_io.format_instructions += """Output example: {"plugin_selection":"F_1234", "reason_of_selection":"F_1234 plugin satisfy user requirement most"}\n"""
@@ -74,13 +74,13 @@ def execute_plugin(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prom
         msg += "请求的Prompt为：\n" + wrap_code(get_inputs_show_user(inputs, plugin_arr_enum_prompt))
         msg += "语言模型回复为：\n" + wrap_code(gpt_reply)
         msg += "\n但您可以尝试再试一次\n"
-        yield from update_ui_lastest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=2)
+        yield from update_ui_latest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=2)
         return
     if plugin_sel.plugin_selection not in plugin_arr_dict_parse:
         msg = f"抱歉, 找不到合适插件执行该任务, 或者{llm_kwargs['llm_model']}无法理解您的需求。"
         msg += f"语言模型{llm_kwargs['llm_model']}选择了不存在的插件：\n" + wrap_code(gpt_reply)
         msg += "\n但您可以尝试再试一次\n"
-        yield from update_ui_lastest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=2)
+        yield from update_ui_latest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=2)
         return
 
     # ⭐ ⭐ ⭐ 确认插件参数
@@ -90,7 +90,7 @@ def execute_plugin(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prom
         appendix_info = get_recent_file_prompt_support(chatbot)
 
     plugin = plugin_arr_dict_parse[plugin_sel.plugin_selection]
-    yield from update_ui_lastest_msg(lastmsg=f"正在执行任务: {txt}\n\n提取插件参数...", chatbot=chatbot, history=history, delay=0)
+    yield from update_ui_latest_msg(lastmsg=f"正在执行任务: {txt}\n\n提取插件参数...", chatbot=chatbot, history=history, delay=0)
     class PluginExplicit(BaseModel):
         plugin_selection: str = plugin_sel.plugin_selection
         plugin_arg: str = Field(description="The argument of the plugin.", default="")
@@ -109,6 +109,6 @@ def execute_plugin(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prom
     fn = plugin['Function']
     fn_name = fn.__name__
     msg = f'{llm_kwargs["llm_model"]}为您选择了插件: `{fn_name}`\n\n插件说明：{plugin["Info"]}\n\n插件参数：{plugin_sel.plugin_arg}\n\n假如偏离了您的要求，按停止键终止。'
-    yield from update_ui_lastest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=2)
+    yield from update_ui_latest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=2)
     yield from fn(plugin_sel.plugin_arg, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, -1)
     return

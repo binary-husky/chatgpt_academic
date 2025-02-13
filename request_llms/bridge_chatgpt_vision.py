@@ -16,7 +16,7 @@ import base64
 import glob
 from loguru import logger
 from toolbox import get_conf, update_ui, is_any_api_key, select_api_key, what_keys, clip_history, trimmed_format_exc, is_the_upload_folder, \
-    update_ui_lastest_msg, get_max_token, encode_image, have_any_recent_upload_image_files, log_chat
+    update_ui_latest_msg, get_max_token, encode_image, have_any_recent_upload_image_files, log_chat
 
 
 proxies, TIMEOUT_SECONDS, MAX_RETRY, API_ORG, AZURE_CFG_ARRAY = \
@@ -67,7 +67,7 @@ def verify_endpoint(endpoint):
     """
     return endpoint
 
-def predict_no_ui_long_connection(inputs, llm_kwargs, history=[], sys_prompt="", observe_window=None, console_slience=False):
+def predict_no_ui_long_connection(inputs, llm_kwargs, history=[], sys_prompt="", observe_window=None, console_silence=False):
     raise NotImplementedError
 
 
@@ -183,7 +183,7 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
                     if ('data: [DONE]' in chunk_decoded) or (len(chunkjson['choices'][0]["delta"]) == 0):
                         # 判定为数据流的结束，gpt_replying_buffer也写完了
                         lastmsg = chatbot[-1][-1] + f"\n\n\n\n「{llm_kwargs['llm_model']}调用结束，该模型不具备上下文对话能力，如需追问，请及时切换模型。」"
-                        yield from update_ui_lastest_msg(lastmsg, chatbot, history, delay=1)
+                        yield from update_ui_latest_msg(lastmsg, chatbot, history, delay=1)
                         log_chat(llm_model=llm_kwargs["llm_model"], input_str=inputs, output_str=gpt_replying_buffer)
                         break
                     # 处理数据流的主体

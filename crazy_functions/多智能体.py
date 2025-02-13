@@ -8,7 +8,7 @@
 
 import time
 from toolbox import CatchException, update_ui, gen_time_str, trimmed_format_exc, ProxyNetworkActivate
-from toolbox import get_conf, select_api_key, update_ui_lastest_msg, Singleton
+from toolbox import get_conf, select_api_key, update_ui_latest_msg, Singleton
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive, get_plugin_arg
 from crazy_functions.crazy_utils import input_clipping, try_install_deps
 from crazy_functions.agent_fns.persistent import GradioMultiuserManagerForPersistentClasses

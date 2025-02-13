@@ -19,7 +19,7 @@ class PDF_Tran(GptAcademicPluginTemplate):
             "additional_prompt":
                 ArgProperty(title="额外提示词", description="例如：对专有名词、翻译语气等方面的要求", default_value="", type="string").model_dump_json(), # 高级参数输入区，自动同步
             "pdf_parse_method":
-                ArgProperty(title="PDF解析方法", options=["DOC2X", "GROBID", "ClASSIC"], description="无", default_value="GROBID", type="dropdown").model_dump_json(),
+                ArgProperty(title="PDF解析方法", options=["DOC2X", "GROBID", "Classic"], description="无", default_value="GROBID", type="dropdown").model_dump_json(),
         }
         return gui_definition
 

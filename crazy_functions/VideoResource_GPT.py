@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from functools import lru_cache
 from itertools import zip_longest
 from check_proxy import check_proxy
-from toolbox import CatchException, update_ui, get_conf, promote_file_to_downloadzone, update_ui_lastest_msg, generate_file_link
+from toolbox import CatchException, update_ui, get_conf, promote_file_to_downloadzone, update_ui_latest_msg, generate_file_link
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive, input_clipping
 from request_llms.bridge_all import model_info
 from request_llms.bridge_all import predict_no_ui_long_connection
@@ -46,7 +46,7 @@ def download_video(bvid, user_name, chatbot, history):
     # pause a while
     tic_time = 8
     for i in range(tic_time):
-        yield from update_ui_lastest_msg(
+        yield from update_ui_latest_msg(
             lastmsg=f"即将下载音频。等待{tic_time-i}秒后自动继续, 点击“停止”键取消此操作。", 
             chatbot=chatbot, history=[], delay=1)
 
@@ -61,13 +61,13 @@ def download_video(bvid, user_name, chatbot, history):
     # preview
     preview_list = [promote_file_to_downloadzone(fp) for fp in downloaded_files]
     file_links = generate_file_link(preview_list)
-    yield from update_ui_lastest_msg(f"已完成的文件: <br/>" + file_links, chatbot=chatbot, history=history, delay=0)
+    yield from update_ui_latest_msg(f"已完成的文件: <br/>" + file_links, chatbot=chatbot, history=history, delay=0)
     chatbot.append((None, f"即将下载视频。"))
 
     # pause a while
     tic_time = 16
     for i in range(tic_time):
-        yield from update_ui_lastest_msg(
+        yield from update_ui_latest_msg(
             lastmsg=f"即将下载视频。等待{tic_time-i}秒后自动继续, 点击“停止”键取消此操作。", 
             chatbot=chatbot, history=[], delay=1)
 
@@ -78,7 +78,7 @@ def download_video(bvid, user_name, chatbot, history):
     # preview
     preview_list = [promote_file_to_downloadzone(fp) for fp in downloaded_files_part2]
     file_links = generate_file_link(preview_list)
-    yield from update_ui_lastest_msg(f"已完成的文件: <br/>" + file_links, chatbot=chatbot, history=history, delay=0)
+    yield from update_ui_latest_msg(f"已完成的文件: <br/>" + file_links, chatbot=chatbot, history=history, delay=0)
 
     # return
     return downloaded_files + downloaded_files_part2
@@ -110,7 +110,7 @@ def 多媒体任务(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_pro
         # 结构化生成
         internet_search_keyword = user_wish
 
-        yield from update_ui_lastest_msg(lastmsg=f"发起互联网检索: {internet_search_keyword} ...", chatbot=chatbot, history=[], delay=1)
+        yield from update_ui_latest_msg(lastmsg=f"发起互联网检索: {internet_search_keyword} ...", chatbot=chatbot, history=[], delay=1)
         from crazy_functions.Internet_GPT import internet_search_with_analysis_prompt
         result = yield from internet_search_with_analysis_prompt(
             prompt=internet_search_keyword,
@@ -119,7 +119,7 @@ def 多媒体任务(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_pro
             chatbot=chatbot
         )
 
-        yield from update_ui_lastest_msg(lastmsg=f"互联网检索结论: {result} \n\n 正在生成进一步检索方案 ...", chatbot=chatbot, history=[], delay=1)
+        yield from update_ui_latest_msg(lastmsg=f"互联网检索结论: {result} \n\n 正在生成进一步检索方案 ...", chatbot=chatbot, history=[], delay=1)
         rf_req = dedent(f"""
         The user wish to get the following resource:
             {user_wish}
@@ -132,7 +132,7 @@ def 多媒体任务(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_pro
         rf_req = dedent(f"""
         The user wish to get the following resource:
             {user_wish}
-        Generate reseach keywords (less than 5 keywords) accordingly.
+        Generate research keywords (less than 5 keywords) accordingly.
         """)
     gpt_json_io = GptJsonIO(Query)
     inputs = rf_req + gpt_json_io.format_instructions
@@ -146,12 +146,12 @@ def 多媒体任务(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_pro
     yield from update_ui(chatbot=chatbot, history=history) # 刷新界面
 
     # 获取候选资源
-    candadate_dictionary: dict =  get_video_resource(video_engine_keywords)
-    candadate_dictionary_as_str = json.dumps(candadate_dictionary, ensure_ascii=False, indent=4)
+    candidate_dictionary: dict =  get_video_resource(video_engine_keywords)
+    candidate_dictionary_as_str = json.dumps(candidate_dictionary, ensure_ascii=False, indent=4)
 
     # 展示候选资源
-    candadate_display = "\n".join([f"{i+1}. {it['title']}" for i, it in enumerate(candadate_dictionary)])
-    chatbot.append((None, f"候选:\n\n{candadate_display}"))
+    candidate_display = "\n".join([f"{i+1}. {it['title']}" for i, it in enumerate(candidate_dictionary)])
+    chatbot.append((None, f"候选:\n\n{candidate_display}"))
     yield from update_ui(chatbot=chatbot, history=history) # 刷新界面
 
     # 结构化生成
@@ -160,7 +160,7 @@ def 多媒体任务(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_pro
         {user_wish}
 
     Select the most relevant and suitable video resource from the following search results:
-        {candadate_dictionary_as_str}
+        {candidate_dictionary_as_str}
 
     Note:
         1. The first several search video results are more likely to satisfy the user's wish.

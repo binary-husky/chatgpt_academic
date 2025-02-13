@@ -183,7 +183,7 @@ def update_ui(chatbot:ChatBotWithCookies, history:list, msg:str="正常", **kwar
     yield cookies, chatbot_gr, json_history, msg
 
 
-def update_ui_lastest_msg(lastmsg:str, chatbot:ChatBotWithCookies, history:list, delay:float=1, msg:str="正常"):  # 刷新界面
+def update_ui_latest_msg(lastmsg:str, chatbot:ChatBotWithCookies, history:list, delay:float=1, msg:str="正常"):  # 刷新界面
     """
     刷新用户界面
     """
@@ -679,7 +679,7 @@ def run_gradio_in_subpath(demo, auth, port, custom_path):
             return True
         if len(path) == 0:
             logger.info(
-                "ilegal custom path: {}\npath must not be empty\ndeploy on root url".format(
+                "illegal custom path: {}\npath must not be empty\ndeploy on root url".format(
                     path
                 )
             )
@@ -690,14 +690,14 @@ def run_gradio_in_subpath(demo, auth, port, custom_path):
                 return True
             return False
         logger.info(
-            "ilegal custom path: {}\npath should begin with '/'\ndeploy on root url".format(
+            "illegal custom path: {}\npath should begin with '/'\ndeploy on root url".format(
                 path
             )
         )
         return False
 
     if not is_path_legal(custom_path):
-        raise RuntimeError("Ilegal custom path")
+        raise RuntimeError("Illegal custom path")
     import uvicorn
     import gradio as gr
     from fastapi import FastAPI

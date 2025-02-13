@@ -166,7 +166,7 @@ class PointWithTrace(Scene):
 
 ```
 
-# do not use get_graph, this funciton is deprecated
+# do not use get_graph, this function is deprecated
 
 class ExampleFunctionGraph(Scene):
     def construct(self):

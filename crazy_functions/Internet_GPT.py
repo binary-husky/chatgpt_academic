@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from functools import lru_cache
 from itertools import zip_longest
 from check_proxy import check_proxy
-from toolbox import CatchException, update_ui, get_conf, update_ui_lastest_msg
+from toolbox import CatchException, update_ui, get_conf, update_ui_latest_msg
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive, input_clipping
 from request_llms.bridge_all import model_info
 from request_llms.bridge_all import predict_no_ui_long_connection
@@ -49,7 +49,7 @@ def search_optimizer(
     mutable = ["", time.time(), ""]
     llm_kwargs["temperature"] = 0.8
     try:
-        querys_json = predict_no_ui_long_connection(
+        queries_json = predict_no_ui_long_connection(
             inputs=query,
             llm_kwargs=llm_kwargs,
             history=[],
@@ -57,31 +57,31 @@ def search_optimizer(
             observe_window=mutable,
         )
     except Exception:
-        querys_json = "1234"
+        queries_json = "1234"
     #* 尝试解码优化后的搜索结果
-    querys_json = re.sub(r"```json|```", "", querys_json)
+    queries_json = re.sub(r"```json|```", "", queries_json)
     try:
-        querys = json.loads(querys_json)
+        queries = json.loads(queries_json)
     except Exception:
         #* 如果解码失败,降低温度再试一次
         try:
             llm_kwargs["temperature"] = 0.4
-            querys_json = predict_no_ui_long_connection(
+            queries_json = predict_no_ui_long_connection(
                 inputs=query,
                 llm_kwargs=llm_kwargs,
                 history=[],
                 sys_prompt=sys_prompt,
                 observe_window=mutable,
             )
-            querys_json = re.sub(r"```json|```", "", querys_json)
-            querys = json.loads(querys_json)
+            queries_json = re.sub(r"```json|```", "", queries_json)
+            queries = json.loads(queries_json)
         except Exception:
             #* 如果再次失败，直接返回原始问题
-            querys = [query]
+            queries = [query]
     links = []
     success = 0
     Exceptions = ""
-    for q in querys:
+    for q in queries:
         try:
             link = searxng_request(q, proxies, categories, searxng_url, engines=engines)
             if len(link) > 0:
@@ -224,15 +224,15 @@ def internet_search_with_analysis_prompt(prompt, analysis_prompt, llm_kwargs, ch
     categories = 'general'
     searxng_url = None  # 使用默认的searxng_url
     engines = None  # 使用默认的搜索引擎
-    yield from update_ui_lastest_msg(lastmsg=f"检索中: {prompt} ...", chatbot=chatbot, history=[], delay=1)
+    yield from update_ui_latest_msg(lastmsg=f"检索中: {prompt} ...", chatbot=chatbot, history=[], delay=1)
     urls = searxng_request(prompt, proxies, categories, searxng_url, engines=engines)
-    yield from update_ui_lastest_msg(lastmsg=f"依次访问搜索到的网站 ...", chatbot=chatbot, history=[], delay=1)
+    yield from update_ui_latest_msg(lastmsg=f"依次访问搜索到的网站 ...", chatbot=chatbot, history=[], delay=1)
     if len(urls) == 0:
         return None
     max_search_result = 5   # 最多收纳多少个网页的结果
     history = []
     for index, url in enumerate(urls[:max_search_result]):
-        yield from update_ui_lastest_msg(lastmsg=f"依次访问搜索到的网站: {url['link']} ...", chatbot=chatbot, history=[], delay=1)
+        yield from update_ui_latest_msg(lastmsg=f"依次访问搜索到的网站: {url['link']} ...", chatbot=chatbot, history=[], delay=1)
         res = scrape_text(url['link'], proxies)
         prefix = f"第{index}份搜索结果 [源自{url['source'][0]}搜索] （{url['title'][:25]}）："
         history.extend([prefix, res])
@@ -247,7 +247,7 @@ def internet_search_with_analysis_prompt(prompt, analysis_prompt, llm_kwargs, ch
         llm_kwargs=llm_kwargs,
         history=history,
         sys_prompt="请从搜索结果中抽取信息，对最相关的两个搜索结果进行总结，然后回答问题。",
-        console_slience=False,
+        console_silence=False,
     )
     return gpt_say
 

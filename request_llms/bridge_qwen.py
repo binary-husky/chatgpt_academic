@@ -1,12 +1,12 @@
 import time
 import os
-from toolbox import update_ui, get_conf, update_ui_lastest_msg
+from toolbox import update_ui, get_conf, update_ui_latest_msg
 from toolbox import check_packages, report_exception, log_chat
 
 model_name = 'Qwen'
 
 def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="",
-                                  observe_window:list=[], console_slience:bool=False):
+                                  observe_window:list=[], console_silence:bool=False):
     """
         ⭐多线程方法
         函数的说明请见 request_llms/bridge_all.py
@@ -35,13 +35,13 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
     try:
         check_packages(["dashscope"])
     except:
-        yield from update_ui_lastest_msg(f"导入软件依赖失败。使用该模型需要额外依赖，安装方法```pip install --upgrade dashscope```。",
+        yield from update_ui_latest_msg(f"导入软件依赖失败。使用该模型需要额外依赖，安装方法```pip install --upgrade dashscope```。",
                                          chatbot=chatbot, history=history, delay=0)
         return
 
     # 检查DASHSCOPE_API_KEY
     if get_conf("DASHSCOPE_API_KEY") == "":
-        yield from update_ui_lastest_msg(f"请配置 DASHSCOPE_API_KEY。",
+        yield from update_ui_latest_msg(f"请配置 DASHSCOPE_API_KEY。",
                                          chatbot=chatbot, history=history, delay=0)
         return
 

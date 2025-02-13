@@ -3,7 +3,7 @@ import re
 import shutil
 import numpy as np
 from loguru import logger
-from toolbox import update_ui, update_ui_lastest_msg, get_log_folder, gen_time_str
+from toolbox import update_ui, update_ui_latest_msg, get_log_folder, gen_time_str
 from toolbox import get_conf, promote_file_to_downloadzone
 from crazy_functions.latex_fns.latex_toolbox import PRESERVE, TRANSFORM
 from crazy_functions.latex_fns.latex_toolbox import set_forbidden_text, set_forbidden_text_begin_end, set_forbidden_text_careful_brace
@@ -20,7 +20,7 @@ def split_subprocess(txt, project_folder, return_dict, opts):
     """
     break down latex file to a linked list,
     each node use a preserve flag to indicate whether it should
-    be proccessed by GPT.
+    be processed by GPT.
     """
     text = txt
     mask = np.zeros(len(txt), dtype=np.uint8) + TRANSFORM
@@ -85,14 +85,14 @@ class LatexPaperSplit():
     """
     break down latex file to a linked list,
     each node use a preserve flag to indicate whether it should
-    be proccessed by GPT.
+    be processed by GPT.
     """
     def __init__(self) -> None:
         self.nodes = None
         self.msg = "*{\\scriptsize\\textbf{警告：该PDF由GPT-Academic开源项目调用大语言模型+Latex翻译插件一键生成，" + \
             "版权归原文作者所有。翻译内容可靠性无保障，请仔细鉴别并以原文为准。" + \
             "项目Github地址 \\url{https://github.com/binary-husky/gpt_academic/}。"
-        # 请您不要删除或修改这行警告，除非您是论文的原作者（如果您是论文原作者，欢迎加REAME中的QQ联系开发者）
+        # 请您不要删除或修改这行警告，除非您是论文的原作者（如果您是论文原作者，欢迎加README中的QQ联系开发者）
         self.msg_declare = "为了防止大语言模型的意外谬误产生扩散影响，禁止移除或修改此警告。}}\\\\"
         self.title = "unknown"
         self.abstract = "unknown"
@@ -151,7 +151,7 @@ class LatexPaperSplit():
         """
         break down latex file to a linked list,
         each node use a preserve flag to indicate whether it should
-        be proccessed by GPT.
+        be processed by GPT.
         P.S. use multiprocessing to avoid timeout error
         """
         import multiprocessing
@@ -351,7 +351,7 @@ def 编译Latex(chatbot, history, main_file_original, main_file_modified, work_f
     max_try = 32
     chatbot.append([f"正在编译PDF文档", f'编译已经开始。当前工作路径为{work_folder}，如果程序停顿5分钟以上，请直接去该路径下取回翻译结果，或者重启之后再度尝试 ...']); yield from update_ui(chatbot=chatbot, history=history)
     chatbot.append([f"正在编译PDF文档", '...']); yield from update_ui(chatbot=chatbot, history=history); time.sleep(1); chatbot[-1] = list(chatbot[-1]) # 刷新界面
-    yield from update_ui_lastest_msg('编译已经开始...', chatbot, history)   # 刷新Gradio前端界面
+    yield from update_ui_latest_msg('编译已经开始...', chatbot, history)   # 刷新Gradio前端界面
     # 检查是否需要使用xelatex
     def check_if_need_xelatex(tex_path):
         try:
@@ -396,32 +396,32 @@ def 编译Latex(chatbot, history, main_file_original, main_file_modified, work_f
             shutil.copyfile(may_exist_bbl, target_bbl)
 
         # https://stackoverflow.com/questions/738755/dont-make-me-manually-abort-a-latex-compile-when-theres-an-error
-        yield from update_ui_lastest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译原始PDF ...', chatbot, history)   # 刷新Gradio前端界面
+        yield from update_ui_latest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译原始PDF ...', chatbot, history)   # 刷新Gradio前端界面
         ok = compile_latex_with_timeout(get_compile_command(compiler, main_file_original), work_folder_original)
 
-        yield from update_ui_lastest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译转化后的PDF ...', chatbot, history)   # 刷新Gradio前端界面
+        yield from update_ui_latest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译转化后的PDF ...', chatbot, history)   # 刷新Gradio前端界面
         ok = compile_latex_with_timeout(get_compile_command(compiler, main_file_modified), work_folder_modified)
 
         if ok and os.path.exists(pj(work_folder_modified, f'{main_file_modified}.pdf')):
             # 只有第二步成功，才能继续下面的步骤
-            yield from update_ui_lastest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译BibTex ...', chatbot, history)    # 刷新Gradio前端界面
+            yield from update_ui_latest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译BibTex ...', chatbot, history)    # 刷新Gradio前端界面
             if not os.path.exists(pj(work_folder_original, f'{main_file_original}.bbl')):
                 ok = compile_latex_with_timeout(f'bibtex  {main_file_original}.aux', work_folder_original)
             if not os.path.exists(pj(work_folder_modified, f'{main_file_modified}.bbl')):
                 ok = compile_latex_with_timeout(f'bibtex  {main_file_modified}.aux', work_folder_modified)
 
-            yield from update_ui_lastest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译文献交叉引用 ...', chatbot, history)  # 刷新Gradio前端界面
+            yield from update_ui_latest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 编译文献交叉引用 ...', chatbot, history)  # 刷新Gradio前端界面
             ok = compile_latex_with_timeout(get_compile_command(compiler, main_file_original), work_folder_original)
             ok = compile_latex_with_timeout(get_compile_command(compiler, main_file_modified), work_folder_modified)
             ok = compile_latex_with_timeout(get_compile_command(compiler, main_file_original), work_folder_original)
             ok = compile_latex_with_timeout(get_compile_command(compiler, main_file_modified), work_folder_modified)
 
             if mode!='translate_zh':
-                yield from update_ui_lastest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 使用latexdiff生成论文转化前后对比 ...', chatbot, history) # 刷新Gradio前端界面
+                yield from update_ui_latest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 使用latexdiff生成论文转化前后对比 ...', chatbot, history) # 刷新Gradio前端界面
                 logger.info(    f'latexdiff --encoding=utf8 --append-safecmd=subfile {work_folder_original}/{main_file_original}.tex  {work_folder_modified}/{main_file_modified}.tex --flatten > {work_folder}/merge_diff.tex')
                 ok = compile_latex_with_timeout(f'latexdiff --encoding=utf8 --append-safecmd=subfile {work_folder_original}/{main_file_original}.tex  {work_folder_modified}/{main_file_modified}.tex --flatten > {work_folder}/merge_diff.tex', os.getcwd())
 
-                yield from update_ui_lastest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 正在编译对比PDF ...', chatbot, history)   # 刷新Gradio前端界面
+                yield from update_ui_latest_msg(f'尝试第 {n_fix}/{max_try} 次编译, 正在编译对比PDF ...', chatbot, history)   # 刷新Gradio前端界面
                 ok = compile_latex_with_timeout(get_compile_command(compiler, 'merge_diff'), work_folder)
                 ok = compile_latex_with_timeout(f'bibtex    merge_diff.aux', work_folder)
                 ok = compile_latex_with_timeout(get_compile_command(compiler, 'merge_diff'), work_folder)
@@ -435,13 +435,13 @@ def 编译Latex(chatbot, history, main_file_original, main_file_modified, work_f
         results_ += f"原始PDF编译是否成功: {original_pdf_success};"
         results_ += f"转化PDF编译是否成功: {modified_pdf_success};"
         results_ += f"对比PDF编译是否成功: {diff_pdf_success};"
-        yield from update_ui_lastest_msg(f'第{n_fix}编译结束:<br/>{results_}...', chatbot, history) # 刷新Gradio前端界面
+        yield from update_ui_latest_msg(f'第{n_fix}编译结束:<br/>{results_}...', chatbot, history) # 刷新Gradio前端界面
 
         if diff_pdf_success:
             result_pdf = pj(work_folder_modified, f'merge_diff.pdf')    # get pdf path
             promote_file_to_downloadzone(result_pdf, rename_file=None, chatbot=chatbot)  # promote file to web UI
         if modified_pdf_success:
-            yield from update_ui_lastest_msg(f'转化PDF编译已经成功, 正在尝试生成对比PDF, 请稍候 ...', chatbot, history)    # 刷新Gradio前端界面
+            yield from update_ui_latest_msg(f'转化PDF编译已经成功, 正在尝试生成对比PDF, 请稍候 ...', chatbot, history)    # 刷新Gradio前端界面
             result_pdf = pj(work_folder_modified, f'{main_file_modified}.pdf') # get pdf path
             origin_pdf = pj(work_folder_original, f'{main_file_original}.pdf') # get pdf path
             if os.path.exists(pj(work_folder, '..', 'translation')):
@@ -472,7 +472,7 @@ def 编译Latex(chatbot, history, main_file_original, main_file_modified, work_f
                 work_folder_modified=work_folder_modified,
                 fixed_line=fixed_line
             )
-            yield from update_ui_lastest_msg(f'由于最为关键的转化PDF编译失败, 将根据报错信息修正tex源文件并重试, 当前报错的latex代码处于第{buggy_lines}行 ...', chatbot, history)   # 刷新Gradio前端界面
+            yield from update_ui_latest_msg(f'由于最为关键的转化PDF编译失败, 将根据报错信息修正tex源文件并重试, 当前报错的latex代码处于第{buggy_lines}行 ...', chatbot, history)   # 刷新Gradio前端界面
             if not can_retry: break
 
     return False # 失败啦

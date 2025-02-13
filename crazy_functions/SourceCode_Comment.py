@@ -1,5 +1,5 @@
 import os, copy, time
-from toolbox import CatchException, report_exception, update_ui, zip_result, promote_file_to_downloadzone, update_ui_lastest_msg, get_conf, generate_file_link
+from toolbox import CatchException, report_exception, update_ui, zip_result, promote_file_to_downloadzone, update_ui_latest_msg, get_conf, generate_file_link
 from shared_utils.fastapi_server import validate_path_safety
 from crazy_functions.crazy_utils import input_clipping
 from crazy_functions.crazy_utils import request_gpt_model_multi_threads_with_very_awesome_ui_and_high_efficiency
@@ -117,7 +117,7 @@ def 注释源代码(file_manifest, project_folder, llm_kwargs, plugin_kwargs, ch
                 logger.error(f"文件: {fp} 的注释结果未能成功")
         file_links = generate_file_link(preview_html_list)
 
-        yield from update_ui_lastest_msg(
+        yield from update_ui_latest_msg(
             f"当前任务: <br/>{'<br/>'.join(tasks)}.<br/>" + 
             f"剩余源文件数量: {remain}.<br/>" + 
             f"已完成的文件: {sum(worker_done)}.<br/>" + 

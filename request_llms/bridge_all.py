@@ -1265,9 +1265,9 @@ def LLM_CATCH_EXCEPTION(f):
     """
     装饰器函数，将错误显示出来
     """
-    def decorated(inputs:str, llm_kwargs:dict, history:list, sys_prompt:str, observe_window:list, console_slience:bool):
+    def decorated(inputs:str, llm_kwargs:dict, history:list, sys_prompt:str, observe_window:list, console_silence:bool):
         try:
-            return f(inputs, llm_kwargs, history, sys_prompt, observe_window, console_slience)
+            return f(inputs, llm_kwargs, history, sys_prompt, observe_window, console_silence)
         except Exception as e:
             tb_str = '\n```\n' + trimmed_format_exc() + '\n```\n'
             observe_window[0] = tb_str
@@ -1275,7 +1275,7 @@ def LLM_CATCH_EXCEPTION(f):
     return decorated
 
 
-def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list, sys_prompt:str, observe_window:list=[], console_slience:bool=False):
+def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list, sys_prompt:str, observe_window:list=[], console_silence:bool=False):
     """
     发送至LLM，等待回复，一次性完成，不显示中间过程。但内部（尽可能地）用stream的方法避免中途网线被掐。
     inputs：
@@ -1297,7 +1297,7 @@ def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list, sys
     if '&' not in model:
         # 如果只询问“一个”大语言模型（多数情况）：
         method = model_info[model]["fn_without_ui"]
-        return method(inputs, llm_kwargs, history, sys_prompt, observe_window, console_slience)
+        return method(inputs, llm_kwargs, history, sys_prompt, observe_window, console_silence)
     else:
         # 如果同时询问“多个”大语言模型，这个稍微啰嗦一点，但思路相同，您不必读这个else分支
         executor = ThreadPoolExecutor(max_workers=4)
@@ -1314,7 +1314,7 @@ def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list, sys
             method = model_info[model]["fn_without_ui"]
             llm_kwargs_feedin = copy.deepcopy(llm_kwargs)
             llm_kwargs_feedin['llm_model'] = model
-            future = executor.submit(LLM_CATCH_EXCEPTION(method), inputs, llm_kwargs_feedin, history, sys_prompt, window_mutex[i], console_slience)
+            future = executor.submit(LLM_CATCH_EXCEPTION(method), inputs, llm_kwargs_feedin, history, sys_prompt, window_mutex[i], console_silence)
             futures.append(future)
 
         def mutex_manager(window_mutex, observe_window):

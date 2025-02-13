@@ -1,5 +1,5 @@
 from toolbox import CatchException, check_packages, get_conf
-from toolbox import update_ui, update_ui_lastest_msg, disable_auto_promotion
+from toolbox import update_ui, update_ui_latest_msg, disable_auto_promotion
 from toolbox import trimmed_format_exc_markdown
 from crazy_functions.crazy_utils import get_files_from_everything
 from crazy_functions.pdf_fns.parse_pdf import get_avail_grobid_url
@@ -57,9 +57,9 @@ def 批量翻译PDF文档(txt, llm_kwargs, plugin_kwargs, chatbot, history, syst
             yield from 解析PDF_基于GROBID(file_manifest, project_folder, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, grobid_url)
             return
 
-    if method == "ClASSIC":
+    if method == "Classic":
         # ------- 第三种方法，早期代码，效果不理想 -------
-        yield from update_ui_lastest_msg("GROBID服务不可用，请检查config中的GROBID_URL。作为替代，现在将执行效果稍差的旧版代码。", chatbot, history, delay=3)
+        yield from update_ui_latest_msg("GROBID服务不可用，请检查config中的GROBID_URL。作为替代，现在将执行效果稍差的旧版代码。", chatbot, history, delay=3)
         yield from 解析PDF_简单拆解(file_manifest, project_folder, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt)
         return
 
@@ -77,7 +77,7 @@ def 批量翻译PDF文档(txt, llm_kwargs, plugin_kwargs, chatbot, history, syst
         if grobid_url is not None:
             yield from 解析PDF_基于GROBID(file_manifest, project_folder, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, grobid_url)
             return
-        yield from update_ui_lastest_msg("GROBID服务不可用，请检查config中的GROBID_URL。作为替代，现在将执行效果稍差的旧版代码。", chatbot, history, delay=3)
+        yield from update_ui_latest_msg("GROBID服务不可用，请检查config中的GROBID_URL。作为替代，现在将执行效果稍差的旧版代码。", chatbot, history, delay=3)
         yield from 解析PDF_简单拆解(file_manifest, project_folder, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt)
         return
 

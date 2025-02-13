@@ -324,16 +324,16 @@ def 生成多种Mermaid图表(
     if os.path.exists(txt):  # 如输入区无内容则直接解析历史记录
         from crazy_functions.pdf_fns.parse_word import extract_text_from_files
 
-        file_exist, final_result, page_one, file_manifest, excption = (
+        file_exist, final_result, page_one, file_manifest, exception = (
             extract_text_from_files(txt, chatbot, history)
         )
     else:
         file_exist = False
-        excption = ""
+        exception = ""
         file_manifest = []
 
-    if excption != "":
-        if excption == "word":
+    if exception != "":
+        if exception == "word":
             report_exception(
                 chatbot,
                 history,
@@ -341,7 +341,7 @@ def 生成多种Mermaid图表(
                 b=f"找到了.doc文件，但是该文件格式不被支持，请先转化为.docx格式。",
             )
 
-        elif excption == "pdf":
+        elif exception == "pdf":
             report_exception(
                 chatbot,
                 history,
@@ -349,7 +349,7 @@ def 生成多种Mermaid图表(
                 b=f"导入软件依赖失败。使用该模块需要额外依赖，安装方法```pip install --upgrade pymupdf```。",
             )
 
-        elif excption == "word_pip":
+        elif exception == "word_pip":
             report_exception(
                 chatbot,
                 history,

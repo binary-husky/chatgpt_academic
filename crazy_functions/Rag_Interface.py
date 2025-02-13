@@ -4,7 +4,7 @@ from typing import List
 from shared_utils.fastapi_server import validate_path_safety
 
 from toolbox import report_exception
-from toolbox import CatchException, update_ui, get_conf, get_log_folder, update_ui_lastest_msg
+from toolbox import CatchException, update_ui, get_conf, get_log_folder, update_ui_latest_msg
 from shared_utils.fastapi_server import validate_path_safety
 from crazy_functions.crazy_utils import input_clipping
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive
@@ -92,7 +92,7 @@ def Rag问答(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, u
         chatbot.append([txt, f'正在清空 ({current_context}) ...'])
         yield from update_ui(chatbot=chatbot, history=history)  # 刷新界面
         rag_worker.purge_vector_store()
-        yield from update_ui_lastest_msg('已清空', chatbot, history, delay=0)  # 刷新界面
+        yield from update_ui_latest_msg('已清空', chatbot, history, delay=0)  # 刷新界面
         return
 
     # 3. Normal Q&A processing
@@ -109,10 +109,10 @@ def Rag问答(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, u
 
     # 5. If input is clipped, add input to vector store before retrieve
     if input_is_clipped_flag:
-        yield from update_ui_lastest_msg('检测到长输入, 正在向量化 ...', chatbot, history, delay=0)  # 刷新界面
+        yield from update_ui_latest_msg('检测到长输入, 正在向量化 ...', chatbot, history, delay=0)  # 刷新界面
         # Save input to vector store
         rag_worker.add_text_to_vector_store(txt_origin)
-        yield from update_ui_lastest_msg('向量化完成 ...', chatbot, history, delay=0)  # 刷新界面
+        yield from update_ui_latest_msg('向量化完成 ...', chatbot, history, delay=0)  # 刷新界面
 
         if len(txt_origin) > REMEMBER_PREVIEW:
             HALF = REMEMBER_PREVIEW // 2
@@ -142,7 +142,7 @@ def Rag问答(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, u
     )
 
     # 8. Remember Q&A
-    yield from update_ui_lastest_msg(
+    yield from update_ui_latest_msg(
         model_say + '</br></br>' + f'对话记忆中, 请稍等 ({current_context}) ...',
         chatbot, history, delay=0.5
     )
@@ -150,4 +150,4 @@ def Rag问答(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, u
     history.extend([i_say, model_say])
 
     # 9. Final UI Update
-    yield from update_ui_lastest_msg(model_say, chatbot, history, delay=0, msg=tip)
+    yield from update_ui_latest_msg(model_say, chatbot, history, delay=0, msg=tip)

@@ -1,4 +1,4 @@
-from toolbox import CatchException, update_ui, update_ui_lastest_msg
+from toolbox import CatchException, update_ui, update_ui_latest_msg
 from crazy_functions.multi_stage.multi_stage_utils import GptAcademicGameBaseState
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive
 from request_llms.bridge_all import predict_no_ui_long_connection

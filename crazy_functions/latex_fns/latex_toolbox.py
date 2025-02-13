@@ -168,7 +168,7 @@ def set_forbidden_text(text, mask, pattern, flags=0):
 def reverse_forbidden_text(text, mask, pattern, flags=0, forbid_wrapper=True):
     """
     Move area out of preserve area (make text editable for GPT)
-    count the number of the braces so as to catch compelete text area.
+    count the number of the braces so as to catch complete text area.
     e.g.
     \begin{abstract} blablablablablabla. \end{abstract}
     """
@@ -188,7 +188,7 @@ def reverse_forbidden_text(text, mask, pattern, flags=0, forbid_wrapper=True):
 def set_forbidden_text_careful_brace(text, mask, pattern, flags=0):
     """
     Add a preserve text area in this paper (text become untouchable for GPT).
-    count the number of the braces so as to catch compelete text area.
+    count the number of the braces so as to catch complete text area.
     e.g.
     \caption{blablablablabla\texbf{blablabla}blablabla.}
     """
@@ -214,7 +214,7 @@ def reverse_forbidden_text_careful_brace(
 ):
     """
     Move area out of preserve area (make text editable for GPT)
-    count the number of the braces so as to catch compelete text area.
+    count the number of the braces so as to catch complete text area.
     e.g.
     \caption{blablablablabla\texbf{blablabla}blablabla.}
     """
@@ -287,23 +287,23 @@ def find_main_tex_file(file_manifest, mode):
     在多Tex文档中，寻找主文件，必须包含documentclass，返回找到的第一个。
     P.S. 但愿没人把latex模板放在里面传进来 (6.25 加入判定latex模板的代码)
     """
-    canidates = []
+    candidates = []
     for texf in file_manifest:
         if os.path.basename(texf).startswith("merge"):
             continue
         with open(texf, "r", encoding="utf8", errors="ignore") as f:
             file_content = f.read()
         if r"\documentclass" in file_content:
-            canidates.append(texf)
+            candidates.append(texf)
         else:
             continue
 
-    if len(canidates) == 0:
+    if len(candidates) == 0:
         raise RuntimeError("无法找到一个主Tex文件（包含documentclass关键字）")
-    elif len(canidates) == 1:
-        return canidates[0]
-    else:  # if len(canidates) >= 2 通过一些Latex模板中常见（但通常不会出现在正文）的单词，对不同latex源文件扣分，取评分最高者返回
-        canidates_score = []
+    elif len(candidates) == 1:
+        return candidates[0]
+    else:  # if len(candidates) >= 2 通过一些Latex模板中常见（但通常不会出现在正文）的单词，对不同latex源文件扣分，取评分最高者返回
+        candidates_score = []
         # 给出一些判定模板文档的词作为扣分项
         unexpected_words = [
             "\\LaTeX",
@@ -316,19 +316,19 @@ def find_main_tex_file(file_manifest, mode):
             "reviewers",
         ]
         expected_words = ["\\input", "\\ref", "\\cite"]
-        for texf in canidates:
-            canidates_score.append(0)
+        for texf in candidates:
+            candidates_score.append(0)
             with open(texf, "r", encoding="utf8", errors="ignore") as f:
                 file_content = f.read()
                 file_content = rm_comments(file_content)
             for uw in unexpected_words:
                 if uw in file_content:
-                    canidates_score[-1] -= 1
+                    candidates_score[-1] -= 1
             for uw in expected_words:
                 if uw in file_content:
-                    canidates_score[-1] += 1
-        select = np.argmax(canidates_score)  # 取评分最高者返回
-        return canidates[select]
+                    candidates_score[-1] += 1
+        select = np.argmax(candidates_score)  # 取评分最高者返回
+        return candidates[select]
 
 
 def rm_comments(main_file):
@@ -374,7 +374,7 @@ def find_tex_file_ignore_case(fp):
 
 def merge_tex_files_(project_foler, main_file, mode):
     """
-    Merge Tex project recrusively
+    Merge Tex project recursively
     """
     main_file = rm_comments(main_file)
     for s in reversed([q for q in re.finditer(r"\\input\{(.*?)\}", main_file, re.M)]):
@@ -429,7 +429,7 @@ def find_title_and_abs(main_file):
 
 def merge_tex_files(project_foler, main_file, mode):
     """
-    Merge Tex project recrusively
+    Merge Tex project recursively
     P.S. 顺便把CTEX塞进去以支持中文
     P.S. 顺便把Latex的注释去除
     """

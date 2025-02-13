@@ -15,7 +15,7 @@ Testing:
 
 
 from toolbox import CatchException, update_ui, gen_time_str, trimmed_format_exc, is_the_upload_folder
-from toolbox import promote_file_to_downloadzone, get_log_folder, update_ui_lastest_msg
+from toolbox import promote_file_to_downloadzone, get_log_folder, update_ui_latest_msg
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive, get_plugin_arg
 from crazy_functions.crazy_utils import input_clipping, try_install_deps
 from crazy_functions.gen_fns.gen_fns_shared import is_function_successfully_generated
@@ -27,7 +27,7 @@ import time
 import glob
 import multiprocessing
 
-templete = """
+template = """
 ```python
 import ...  # Put dependencies here, e.g. import numpy as np.
 
@@ -77,10 +77,10 @@ def gpt_interact_multi_step(txt, file_type, llm_kwargs, chatbot, history):
 
     # 第二步
     prompt_compose = [
-        "If previous stage is successful, rewrite the function you have just written to satisfy following templete: \n",
-        templete
+        "If previous stage is successful, rewrite the function you have just written to satisfy following template: \n",
+        template
     ]
-    i_say = "".join(prompt_compose); inputs_show_user = "If previous stage is successful, rewrite the function you have just written to satisfy executable templete. "
+    i_say = "".join(prompt_compose); inputs_show_user = "If previous stage is successful, rewrite the function you have just written to satisfy executable template. "
     gpt_say = yield from request_gpt_model_in_new_thread_with_ui_alive(
         inputs=i_say, inputs_show_user=inputs_show_user,
         llm_kwargs=llm_kwargs, chatbot=chatbot, history=history,
@@ -164,18 +164,18 @@ def 函数动态生成(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_
     if get_plugin_arg(plugin_kwargs, key="file_path_arg", default=False):
         file_path = get_plugin_arg(plugin_kwargs, key="file_path_arg", default=None)
         file_list.append(file_path)
-        yield from update_ui_lastest_msg(f"当前文件: {file_path}", chatbot, history, 1)
+        yield from update_ui_latest_msg(f"当前文件: {file_path}", chatbot, history, 1)
     elif have_any_recent_upload_files(chatbot):
         file_dir = get_recent_file_prompt_support(chatbot)
         file_list = glob.glob(os.path.join(file_dir, '**/*'), recursive=True)
-        yield from update_ui_lastest_msg(f"当前文件处理列表: {file_list}", chatbot, history, 1)
+        yield from update_ui_latest_msg(f"当前文件处理列表: {file_list}", chatbot, history, 1)
     else:
         chatbot.append(["文件检索", "没有发现任何近期上传的文件。"])
-        yield from update_ui_lastest_msg("没有发现任何近期上传的文件。", chatbot, history, 1)
+        yield from update_ui_latest_msg("没有发现任何近期上传的文件。", chatbot, history, 1)
         return  # 2. 如果没有文件
     if len(file_list) == 0:
         chatbot.append(["文件检索", "没有发现任何近期上传的文件。"])
-        yield from update_ui_lastest_msg("没有发现任何近期上传的文件。", chatbot, history, 1)
+        yield from update_ui_latest_msg("没有发现任何近期上传的文件。", chatbot, history, 1)
         return  # 2. 如果没有文件
 
     # 读取文件
@@ -183,7 +183,7 @@ def 函数动态生成(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_
 
     # 粗心检查
     if is_the_upload_folder(txt):
-        yield from update_ui_lastest_msg(f"请在输入框内填写需求, 然后再次点击该插件! 至于您的文件，不用担心, 文件路径 {txt} 已经被记忆. ", chatbot, history, 1)
+        yield from update_ui_latest_msg(f"请在输入框内填写需求, 然后再次点击该插件! 至于您的文件，不用担心, 文件路径 {txt} 已经被记忆. ", chatbot, history, 1)
         return
 
     # 开始干正事
@@ -195,7 +195,7 @@ def 函数动态生成(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_
             code, installation_advance, txt, file_type, llm_kwargs, chatbot, history = \
                 yield from gpt_interact_multi_step(txt, file_type, llm_kwargs, chatbot, history)
             chatbot.append(["代码生成阶段结束", ""])
-            yield from update_ui_lastest_msg(f"正在验证上述代码的有效性 ...", chatbot, history, 1)
+            yield from update_ui_latest_msg(f"正在验证上述代码的有效性 ...", chatbot, history, 1)
             # ⭐ 分离代码块
             code = get_code_block(code)
             # ⭐ 检查模块
@@ -206,11 +206,11 @@ def 函数动态生成(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_
             if not traceback: traceback = trimmed_format_exc()
         # 处理异常
         if not traceback: traceback = trimmed_format_exc()
-        yield from update_ui_lastest_msg(f"第 {j+1}/{MAX_TRY} 次代码生成尝试, 失败了~ 别担心, 我们5秒后再试一次... \n\n此次我们的错误追踪是\n```\n{traceback}\n```\n", chatbot, history, 5)
+        yield from update_ui_latest_msg(f"第 {j+1}/{MAX_TRY} 次代码生成尝试, 失败了~ 别担心, 我们5秒后再试一次... \n\n此次我们的错误追踪是\n```\n{traceback}\n```\n", chatbot, history, 5)
 
     # 代码生成结束, 开始执行
     TIME_LIMIT = 15
-    yield from update_ui_lastest_msg(f"开始创建新进程并执行代码! 时间限制 {TIME_LIMIT} 秒. 请等待任务完成... ", chatbot, history, 1)
+    yield from update_ui_latest_msg(f"开始创建新进程并执行代码! 时间限制 {TIME_LIMIT} 秒. 请等待任务完成... ", chatbot, history, 1)
     manager = multiprocessing.Manager()
     return_dict = manager.dict()
 

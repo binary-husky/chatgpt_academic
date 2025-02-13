@@ -113,7 +113,7 @@ def get_crazy_functions():
             "Group": "学术",
             "Color": "stop",
             "AsButton": True,
-            "Info": "Arixv论文精细翻译 | 输入参数arxiv论文的ID，比如1812.10695",
+            "Info": "ArXiv论文精细翻译 | 输入参数arxiv论文的ID，比如1812.10695",
             "Function": HotReload(Latex翻译中文并重新编译PDF),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
             "Class": Arxiv_Localize,    # 新一代插件需要注册Class
         },
@@ -352,7 +352,7 @@ def get_crazy_functions():
             "ArgsReminder": r"如果有必要, 请在此处给出自定义翻译命令, 解决部分词汇翻译不准确的问题。 "
                             r"例如当单词'agent'翻译不准确时, 请尝试把以下指令复制到高级参数区: "
                             r'If the term "agent" is used in this section, it should be translated to "智能体". ',
-            "Info": "Arixv论文精细翻译 | 输入参数arxiv论文的ID，比如1812.10695",
+            "Info": "ArXiv论文精细翻译 | 输入参数arxiv论文的ID，比如1812.10695",
             "Function": HotReload(Latex翻译中文并重新编译PDF),  # 当注册Class后，Function旧接口仅会在“虚空终端”中起作用
             "Class": Arxiv_Localize,    # 新一代插件需要注册Class
         },

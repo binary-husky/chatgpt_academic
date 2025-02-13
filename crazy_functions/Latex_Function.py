@@ -1,5 +1,5 @@
 from toolbox import update_ui, trimmed_format_exc, get_conf, get_log_folder, promote_file_to_downloadzone, check_repeat_upload, map_file_to_sha256
-from toolbox import CatchException, report_exception, update_ui_lastest_msg, zip_result, gen_time_str
+from toolbox import CatchException, report_exception, update_ui_latest_msg, zip_result, gen_time_str
 from functools import partial
 from loguru import logger
 
@@ -41,7 +41,7 @@ def switch_prompt(pfg, mode, more_requirement):
     return inputs_array, sys_prompt_array
 
 
-def desend_to_extracted_folder_if_exist(project_folder):
+def descend_to_extracted_folder_if_exist(project_folder):
     """
     Descend into the extracted folder if it exists, otherwise return the original folder.
 
@@ -130,7 +130,7 @@ def arxiv_download(chatbot, history, txt, allow_cache=True):
 
     if not txt.startswith('https://arxiv.org/abs/'):
         msg = f"解析arxiv网址失败, 期望格式例如: https://arxiv.org/abs/1707.06690。实际得到格式: {url_}。"
-        yield from update_ui_lastest_msg(msg, chatbot=chatbot, history=history)  # 刷新界面
+        yield from update_ui_latest_msg(msg, chatbot=chatbot, history=history)  # 刷新界面
         return msg, None
     # <-------------- set format ------------->
     arxiv_id = url_.split('/abs/')[-1]
@@ -156,16 +156,16 @@ def arxiv_download(chatbot, history, txt, allow_cache=True):
         return False
 
     if os.path.exists(dst) and allow_cache:
-        yield from update_ui_lastest_msg(f"调用缓存 {arxiv_id}", chatbot=chatbot, history=history)  # 刷新界面
+        yield from update_ui_latest_msg(f"调用缓存 {arxiv_id}", chatbot=chatbot, history=history)  # 刷新界面
         success = True
     else:
-        yield from update_ui_lastest_msg(f"开始下载 {arxiv_id}", chatbot=chatbot, history=history)  # 刷新界面
+        yield from update_ui_latest_msg(f"开始下载 {arxiv_id}", chatbot=chatbot, history=history)  # 刷新界面
         success = fix_url_and_download()
-        yield from update_ui_lastest_msg(f"下载完成 {arxiv_id}", chatbot=chatbot, history=history)  # 刷新界面
+        yield from update_ui_latest_msg(f"下载完成 {arxiv_id}", chatbot=chatbot, history=history)  # 刷新界面
 
 
     if not success:
-        yield from update_ui_lastest_msg(f"下载失败 {arxiv_id}", chatbot=chatbot, history=history)
+        yield from update_ui_latest_msg(f"下载失败 {arxiv_id}", chatbot=chatbot, history=history)
         raise tarfile.ReadError(f"论文下载失败 {arxiv_id}")
 
     # <-------------- extract file ------------->
@@ -288,7 +288,7 @@ def Latex英文纠错加PDF对比(txt, llm_kwargs, plugin_kwargs, chatbot, histo
         return
 
     # <-------------- if is a zip/tar file ------------->
-    project_folder = desend_to_extracted_folder_if_exist(project_folder)
+    project_folder = descend_to_extracted_folder_if_exist(project_folder)
 
     # <-------------- move latex project away from temp folder ------------->
     from shared_utils.fastapi_server import validate_path_safety
@@ -365,7 +365,7 @@ def Latex翻译中文并重新编译PDF(txt, llm_kwargs, plugin_kwargs, chatbot,
     try:
         txt, arxiv_id = yield from arxiv_download(chatbot, history, txt, allow_cache)
     except tarfile.ReadError as e:
-        yield from update_ui_lastest_msg(
+        yield from update_ui_latest_msg(
             "无法自动下载该论文的Latex源码，请前往arxiv打开此论文下载页面，点other Formats，然后download source手动下载latex源码包。接下来调用本地Latex翻译插件即可。",
             chatbot=chatbot, history=history)
         return
@@ -404,7 +404,7 @@ def Latex翻译中文并重新编译PDF(txt, llm_kwargs, plugin_kwargs, chatbot,
         return
 
     # <-------------- if is a zip/tar file ------------->
-    project_folder = desend_to_extracted_folder_if_exist(project_folder)
+    project_folder = descend_to_extracted_folder_if_exist(project_folder)
 
     # <-------------- move latex project away from temp folder ------------->
     from shared_utils.fastapi_server import validate_path_safety
@@ -518,7 +518,7 @@ def PDF翻译中文并重新编译PDF(txt, llm_kwargs, plugin_kwargs, chatbot, h
     # repeat, project_folder = check_repeat_upload(file_manifest[0], hash_tag)
 
     # if repeat:
-    #     yield from update_ui_lastest_msg(f"发现重复上传，请查收结果（压缩包）...", chatbot=chatbot, history=history)
+    #     yield from update_ui_latest_msg(f"发现重复上传，请查收结果（压缩包）...", chatbot=chatbot, history=history)
     #     try:
     #         translate_pdf = [f for f in glob.glob(f'{project_folder}/**/merge_translate_zh.pdf', recursive=True)][0]
     #         promote_file_to_downloadzone(translate_pdf, rename_file=None, chatbot=chatbot)
@@ -531,7 +531,7 @@ def PDF翻译中文并重新编译PDF(txt, llm_kwargs, plugin_kwargs, chatbot, h
     #         report_exception(chatbot, history, a=f"解析项目: {txt}", b=f"发现重复上传，但是无法找到相关文件")
     #         yield from update_ui(chatbot=chatbot, history=history)
     # else:
-    #     yield from update_ui_lastest_msg(f"未发现重复上传", chatbot=chatbot, history=history)
+    #     yield from update_ui_latest_msg(f"未发现重复上传", chatbot=chatbot, history=history)
 
     # <-------------- convert pdf into tex ------------->
     chatbot.append([f"解析项目: {txt}", "正在将PDF转换为tex项目，请耐心等待..."])
@@ -543,7 +543,7 @@ def PDF翻译中文并重新编译PDF(txt, llm_kwargs, plugin_kwargs, chatbot, h
         return False
 
     # <-------------- translate latex file into Chinese ------------->
-    yield from update_ui_lastest_msg("正在tex项目将翻译为中文...", chatbot=chatbot, history=history)
+    yield from update_ui_latest_msg("正在tex项目将翻译为中文...", chatbot=chatbot, history=history)
     file_manifest = [f for f in glob.glob(f'{project_folder}/**/*.tex', recursive=True)]
     if len(file_manifest) == 0:
         report_exception(chatbot, history, a=f"解析项目: {txt}", b=f"找不到任何.tex文件: {txt}")
@@ -551,7 +551,7 @@ def PDF翻译中文并重新编译PDF(txt, llm_kwargs, plugin_kwargs, chatbot, h
         return
 
     # <-------------- if is a zip/tar file ------------->
-    project_folder = desend_to_extracted_folder_if_exist(project_folder)
+    project_folder = descend_to_extracted_folder_if_exist(project_folder)
 
     # <-------------- move latex project away from temp folder ------------->
     from shared_utils.fastapi_server import validate_path_safety
@@ -571,7 +571,7 @@ def PDF翻译中文并重新编译PDF(txt, llm_kwargs, plugin_kwargs, chatbot, h
                                     switch_prompt=_switch_prompt_)
 
     # <-------------- compile PDF ------------->
-    yield from update_ui_lastest_msg("正在将翻译好的项目tex项目编译为PDF...", chatbot=chatbot, history=history)
+    yield from update_ui_latest_msg("正在将翻译好的项目tex项目编译为PDF...", chatbot=chatbot, history=history)
     success = yield from 编译Latex(chatbot, history, main_file_original='merge',
                                 main_file_modified='merge_translate_zh', mode='translate_zh',
                                 work_folder_original=project_folder, work_folder_modified=project_folder,

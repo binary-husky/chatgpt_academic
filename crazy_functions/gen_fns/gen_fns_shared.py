@@ -2,7 +2,7 @@ import time
 import importlib
 from toolbox import trimmed_format_exc, gen_time_str, get_log_folder
 from toolbox import CatchException, update_ui, gen_time_str, trimmed_format_exc, is_the_upload_folder
-from toolbox import promote_file_to_downloadzone, get_log_folder, update_ui_lastest_msg
+from toolbox import promote_file_to_downloadzone, get_log_folder, update_ui_latest_msg
 import multiprocessing
 
 def get_class_name(class_string):

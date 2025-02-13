@@ -119,7 +119,7 @@ def verify_endpoint(endpoint):
         raise ValueError("Endpoint不正确, 请检查AZURE_ENDPOINT的配置! 当前的Endpoint为:" + endpoint)
     return endpoint
 
-def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="", observe_window:list=None, console_slience:bool=False):
+def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="", observe_window:list=None, console_silence:bool=False):
     """
     发送至chatGPT，等待回复，一次性完成，不显示中间过程。但内部用stream的方法避免中途网线被掐。
     inputs：
@@ -188,7 +188,7 @@ def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], 
         if (not has_content) and (not has_role): continue # raise RuntimeError("发现不标准的第三方接口："+delta)
         if has_content: # has_role = True/False
             result += delta["content"]
-            if not console_slience: print(delta["content"], end='')
+            if not console_silence: print(delta["content"], end='')
             if observe_window is not None:
                 # 观测窗，把已经获取的数据显示出去
                 if len(observe_window) >= 1:
@@ -213,7 +213,7 @@ def predict(inputs:str, llm_kwargs:dict, plugin_kwargs:dict, chatbot:ChatBotWith
     inputs 是本次问询的输入
     top_p, temperature是chatGPT的内部调优参数
     history 是之前的对话列表（注意无论是inputs还是history，内容太长了都会触发token数量溢出的错误）
-    chatbot 为WebUI中显示的对话列表，修改它，然后yeild出去，可以直接修改对话界面内容
+    chatbot 为WebUI中显示的对话列表，修改它，然后yield出去，可以直接修改对话界面内容
     additional_fn代表点击的哪个按钮，按钮见functional.py
     """
     from request_llms.bridge_all import model_info

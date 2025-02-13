@@ -63,7 +63,7 @@ prompts_terminate = """小说的前文回顾：
 """
 
 
-from toolbox import CatchException, update_ui, update_ui_lastest_msg
+from toolbox import CatchException, update_ui, update_ui_latest_msg
 from crazy_functions.multi_stage.multi_stage_utils import GptAcademicGameBaseState
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive
 from request_llms.bridge_all import predict_no_ui_long_connection
@@ -112,7 +112,7 @@ class MiniGame_ResumeStory(GptAcademicGameBaseState):
             if prompt.strip() == 'exit' or prompt.strip() == '结束剧情':
                 # should we terminate game here?
                 self.delete_game = True
-                yield from update_ui_lastest_msg(lastmsg=f"游戏结束。", chatbot=chatbot, history=history, delay=0.)
+                yield from update_ui_latest_msg(lastmsg=f"游戏结束。", chatbot=chatbot, history=history, delay=0.)
                 return
             if '剧情收尾' in prompt:
                 self.cur_task = 'story_terminate'
@@ -137,8 +137,8 @@ class MiniGame_ResumeStory(GptAcademicGameBaseState):
             )
             self.story.append(story_paragraph)
             # # 配图
-            yield from update_ui_lastest_msg(lastmsg=story_paragraph + '<br/>正在生成插图中 ...', chatbot=chatbot, history=history, delay=0.)
-            yield from update_ui_lastest_msg(lastmsg=story_paragraph + '<br/>'+ self.generate_story_image(story_paragraph), chatbot=chatbot, history=history, delay=0.)
+            yield from update_ui_latest_msg(lastmsg=story_paragraph + '<br/>正在生成插图中 ...', chatbot=chatbot, history=history, delay=0.)
+            yield from update_ui_latest_msg(lastmsg=story_paragraph + '<br/>'+ self.generate_story_image(story_paragraph), chatbot=chatbot, history=history, delay=0.)
 
             # # 构建后续剧情引导
             previously_on_story = ""
@@ -171,8 +171,8 @@ class MiniGame_ResumeStory(GptAcademicGameBaseState):
             )
             self.story.append(story_paragraph)
             # # 配图
-            yield from update_ui_lastest_msg(lastmsg=story_paragraph + '<br/>正在生成插图中 ...', chatbot=chatbot, history=history, delay=0.)
-            yield from update_ui_lastest_msg(lastmsg=story_paragraph + '<br/>'+ self.generate_story_image(story_paragraph), chatbot=chatbot, history=history, delay=0.)
+            yield from update_ui_latest_msg(lastmsg=story_paragraph + '<br/>正在生成插图中 ...', chatbot=chatbot, history=history, delay=0.)
+            yield from update_ui_latest_msg(lastmsg=story_paragraph + '<br/>'+ self.generate_story_image(story_paragraph), chatbot=chatbot, history=history, delay=0.)
 
             # # 构建后续剧情引导
             previously_on_story = ""
@@ -204,8 +204,8 @@ class MiniGame_ResumeStory(GptAcademicGameBaseState):
                 chatbot, history_, self.sys_prompt_
             )
             # # 配图
-            yield from update_ui_lastest_msg(lastmsg=story_paragraph + '<br/>正在生成插图中 ...', chatbot=chatbot, history=history, delay=0.)
-            yield from update_ui_lastest_msg(lastmsg=story_paragraph + '<br/>'+ self.generate_story_image(story_paragraph), chatbot=chatbot, history=history, delay=0.)
+            yield from update_ui_latest_msg(lastmsg=story_paragraph + '<br/>正在生成插图中 ...', chatbot=chatbot, history=history, delay=0.)
+            yield from update_ui_latest_msg(lastmsg=story_paragraph + '<br/>'+ self.generate_story_image(story_paragraph), chatbot=chatbot, history=history, delay=0.)
 
             # terminate game
             self.delete_game = True

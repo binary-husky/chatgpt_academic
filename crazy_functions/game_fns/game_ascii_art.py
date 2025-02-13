@@ -1,4 +1,4 @@
-from toolbox import CatchException, update_ui, update_ui_lastest_msg
+from toolbox import CatchException, update_ui, update_ui_latest_msg
 from crazy_functions.multi_stage.multi_stage_utils import GptAcademicGameBaseState
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive
 from request_llms.bridge_all import predict_no_ui_long_connection
@@ -13,7 +13,7 @@ class MiniGame_ASCII_Art(GptAcademicGameBaseState):
         else:
             if prompt.strip() == 'exit':
                 self.delete_game = True
-                yield from update_ui_lastest_msg(lastmsg=f"谜底是{self.obj}，游戏结束。", chatbot=chatbot, history=history, delay=0.)
+                yield from update_ui_latest_msg(lastmsg=f"谜底是{self.obj}，游戏结束。", chatbot=chatbot, history=history, delay=0.)
                 return
             chatbot.append([prompt, ""])
         yield from update_ui(chatbot=chatbot, history=history)
@@ -31,12 +31,12 @@ class MiniGame_ASCII_Art(GptAcademicGameBaseState):
             self.cur_task = 'identify user guess'
             res = get_code_block(raw_res)
             history += ['', f'the answer is {self.obj}', inputs, res]
-            yield from update_ui_lastest_msg(lastmsg=res, chatbot=chatbot, history=history, delay=0.)
+            yield from update_ui_latest_msg(lastmsg=res, chatbot=chatbot, history=history, delay=0.)
 
         elif self.cur_task == 'identify user guess':
             if is_same_thing(self.obj, prompt, self.llm_kwargs):
                 self.delete_game = True
-                yield from update_ui_lastest_msg(lastmsg="你猜对了！", chatbot=chatbot, history=history, delay=0.)
+                yield from update_ui_latest_msg(lastmsg="你猜对了！", chatbot=chatbot, history=history, delay=0.)
             else:
                 self.cur_task = 'identify user guess'
-                yield from update_ui_lastest_msg(lastmsg="猜错了，再试试，输入“exit”获取答案。", chatbot=chatbot, history=history, delay=0.)
+                yield from update_ui_latest_msg(lastmsg="猜错了，再试试，输入“exit”获取答案。", chatbot=chatbot, history=history, delay=0.)

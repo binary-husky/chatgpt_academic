@@ -69,7 +69,7 @@ def decode_chunk(chunk):
     return need_to_pass, chunkjson, is_last_chunk
 
 
-def predict_no_ui_long_connection(inputs, llm_kwargs, history=[], sys_prompt="", observe_window=None, console_slience=False):
+def predict_no_ui_long_connection(inputs, llm_kwargs, history=[], sys_prompt="", observe_window=None, console_silence=False):
     """
     发送至chatGPT，等待回复，一次性完成，不显示中间过程。但内部用stream的方法避免中途网线被掐。
     inputs：
@@ -151,7 +151,7 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
     inputs 是本次问询的输入
     top_p, temperature是chatGPT的内部调优参数
     history 是之前的对话列表（注意无论是inputs还是history，内容太长了都会触发token数量溢出的错误）
-    chatbot 为WebUI中显示的对话列表，修改它，然后yeild出去，可以直接修改对话界面内容
+    chatbot 为WebUI中显示的对话列表，修改它，然后yield出去，可以直接修改对话界面内容
     additional_fn代表点击的哪个按钮，按钮见functional.py
     """
     if inputs == "":     inputs = "空空如也的输入栏"

@@ -1,5 +1,5 @@
 import time
-from toolbox import update_ui, get_conf, update_ui_lastest_msg
+from toolbox import update_ui, get_conf, update_ui_latest_msg
 from toolbox import check_packages, report_exception
 
 model_name = '云雀大模型'
@@ -10,7 +10,7 @@ def validate_key():
     return True
 
 def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="",
-                                  observe_window:list=[], console_slience:bool=False):
+                                  observe_window:list=[], console_silence:bool=False):
     """
         ⭐ 多线程方法
         函数的说明请见 request_llms/bridge_all.py
@@ -42,12 +42,12 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
     try:
         check_packages(["zhipuai"])
     except:
-        yield from update_ui_lastest_msg(f"导入软件依赖失败。使用该模型需要额外依赖，安装方法```pip install --upgrade zhipuai```。",
+        yield from update_ui_latest_msg(f"导入软件依赖失败。使用该模型需要额外依赖，安装方法```pip install --upgrade zhipuai```。",
                                          chatbot=chatbot, history=history, delay=0)
         return
 
     if validate_key() is False:
-        yield from update_ui_lastest_msg(lastmsg="[Local Message] 请配置HUOSHAN_API_KEY", chatbot=chatbot, history=history, delay=0)
+        yield from update_ui_latest_msg(lastmsg="[Local Message] 请配置HUOSHAN_API_KEY", chatbot=chatbot, history=history, delay=0)
         return
 
     if additional_fn is not None:

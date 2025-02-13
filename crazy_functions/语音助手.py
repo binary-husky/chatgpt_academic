@@ -42,7 +42,7 @@ class AsyncGptTask():
             MAX_TOKEN_ALLO = 2560
             i_say, history = input_clipping(i_say, history, max_token_limit=MAX_TOKEN_ALLO)
             gpt_say_partial = predict_no_ui_long_connection(inputs=i_say, llm_kwargs=llm_kwargs, history=history, sys_prompt=sys_prompt,
-                                                            observe_window=observe_window[index], console_slience=True)
+                                                            observe_window=observe_window[index], console_silence=True)
         except ConnectionAbortedError as token_exceed_err:
             logger.error('至少一个线程任务Token溢出而失败', e)
         except Exception as e:

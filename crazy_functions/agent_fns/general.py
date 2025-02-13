@@ -27,7 +27,7 @@ def gpt_academic_generate_oai_reply(
         llm_kwargs=llm_config,
         history=history,
         sys_prompt=self._oai_system_message[0]['content'],
-        console_slience=True
+        console_silence=True
     )
     assumed_done = reply.endswith('\nTERMINATE')
     return True, reply

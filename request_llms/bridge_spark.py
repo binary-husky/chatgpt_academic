@@ -2,7 +2,7 @@
 import time
 import threading
 import importlib
-from toolbox import update_ui, get_conf, update_ui_lastest_msg
+from toolbox import update_ui, get_conf, update_ui_latest_msg
 from multiprocessing import Process, Pipe
 
 model_name = '星火认知大模型'
@@ -14,7 +14,7 @@ def validate_key():
     return True
 
 def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="",
-                                  observe_window:list=[], console_slience:bool=False):
+                                  observe_window:list=[], console_silence:bool=False):
     """
         ⭐多线程方法
         函数的说明请见 request_llms/bridge_all.py
@@ -43,7 +43,7 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
     yield from update_ui(chatbot=chatbot, history=history)
 
     if validate_key() is False:
-        yield from update_ui_lastest_msg(lastmsg="[Local Message] 请配置讯飞星火大模型的XFYUN_APPID, XFYUN_API_KEY, XFYUN_API_SECRET", chatbot=chatbot, history=history, delay=0)
+        yield from update_ui_latest_msg(lastmsg="[Local Message] 请配置讯飞星火大模型的XFYUN_APPID, XFYUN_API_KEY, XFYUN_API_SECRET", chatbot=chatbot, history=history, delay=0)
         return
 
     if additional_fn is not None:

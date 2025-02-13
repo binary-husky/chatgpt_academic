@@ -8,7 +8,7 @@ def is_full_width_char(ch):
         return True  # CJK标点符号
     return False
 
-def scolling_visual_effect(text, scroller_max_len):
+def scrolling_visual_effect(text, scroller_max_len):
     text = text.\
             replace('\n', '').replace('`', '.').replace(' ', '.').replace('<br/>', '.....').replace('$', '.')
     place_take_cnt = 0

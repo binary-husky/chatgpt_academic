@@ -169,7 +169,7 @@ def predict(inputs:str, llm_kwargs:dict, plugin_kwargs:dict, chatbot:ChatBotWith
     log_chat(llm_model=llm_kwargs["llm_model"], input_str=inputs, output_str=gpt_bro_result)
 
 def predict_no_ui_long_connection(inputs, llm_kwargs, history=[], sys_prompt="", observe_window=None,
-                                  console_slience=False):
+                                  console_silence=False):
     gpt_bro_init = MoonShotInit()
     watch_dog_patience = 60  # 看门狗的耐心, 设置10秒即可
     stream_response = gpt_bro_init.generate_messages(inputs, llm_kwargs, history, sys_prompt, True)

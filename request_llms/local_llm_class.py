@@ -216,7 +216,7 @@ class LocalLLMHandle(Process):
 def get_local_llm_predict_fns(LLMSingletonClass, model_name, history_format='classic'):
     load_message = f"{model_name}尚未加载，加载需要一段时间。注意，取决于`config.py`的配置，{model_name}消耗大量的内存（CPU）或显存（GPU），也许会导致低配计算机卡死 ……"
 
-    def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="", observe_window:list=[], console_slience:bool=False):
+    def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="", observe_window:list=[], console_silence:bool=False):
         """
             refer to request_llms/bridge_all.py
         """

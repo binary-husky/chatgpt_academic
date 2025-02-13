@@ -1,6 +1,6 @@
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive
 from toolbox import CatchException, report_exception, promote_file_to_downloadzone
-from toolbox import update_ui, update_ui_lastest_msg, disable_auto_promotion, write_history_to_file
+from toolbox import update_ui, update_ui_latest_msg, disable_auto_promotion, write_history_to_file
 import logging
 import requests
 import time
@@ -156,7 +156,7 @@ def 谷歌检索小助手(txt, llm_kwargs, plugin_kwargs, chatbot, history, syst
     history = []
     meta_paper_info_list = yield from get_meta_information(txt, chatbot, history)
     if len(meta_paper_info_list) == 0:
-        yield from update_ui_lastest_msg(lastmsg='获取文献失败，可能触发了google反爬虫机制。',chatbot=chatbot, history=history, delay=0)
+        yield from update_ui_latest_msg(lastmsg='获取文献失败，可能触发了google反爬虫机制。',chatbot=chatbot, history=history, delay=0)
         return
     batchsize = 5
     for batch in range(math.ceil(len(meta_paper_info_list)/batchsize)):

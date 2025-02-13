@@ -55,7 +55,7 @@ class GetGLMHandle(Process):
                 if self.jittorllms_model is None:
                     device = get_conf('LOCAL_MODEL_DEVICE')
                     from .jittorllms.models import get_model
-                    # availabel_models = ["chatglm", "pangualpha", "llama", "chatrwkv"]
+                    # available_models = ["chatglm", "pangualpha", "llama", "chatrwkv"]
                     args_dict = {'model': 'chatrwkv'}
                     print('self.jittorllms_model = get_model(types.SimpleNamespace(**args_dict))')
                     self.jittorllms_model = get_model(types.SimpleNamespace(**args_dict))
@@ -107,7 +107,7 @@ global rwkv_glm_handle
 rwkv_glm_handle = None
 #################################################################################
 def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="",
-                                  observe_window:list=[], console_slience:bool=False):
+                                  observe_window:list=[], console_silence:bool=False):
     """
         多线程方法
         函数的说明请见 request_llms/bridge_all.py

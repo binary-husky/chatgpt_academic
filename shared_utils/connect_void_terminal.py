@@ -85,7 +85,7 @@ def get_chat_default_kwargs():
         "history": [],
         "sys_prompt": "You are AI assistant",
         "observe_window": None,
-        "console_slience": False,
+        "console_silence": False,
     }
 
     return default_chat_kwargs

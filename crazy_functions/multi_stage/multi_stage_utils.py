@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List
-from toolbox import update_ui_lastest_msg, disable_auto_promotion
+from toolbox import update_ui_latest_msg, disable_auto_promotion
 from toolbox import CatchException, update_ui, get_conf, select_api_key, get_log_folder
 from request_llms.bridge_all import predict_no_ui_long_connection
 from crazy_functions.json_fns.pydantic_io import GptJsonIO, JsonStringError

@@ -1,5 +1,5 @@
 import pickle, os, random
-from toolbox import CatchException, update_ui, get_conf, get_log_folder, update_ui_lastest_msg
+from toolbox import CatchException, update_ui, get_conf, get_log_folder, update_ui_latest_msg
 from crazy_functions.crazy_utils import input_clipping
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive
 from request_llms.bridge_all import predict_no_ui_long_connection
@@ -9,7 +9,7 @@ from loguru import logger
 from typing import List
 
 
-SOCIAL_NETWOK_WORKER_REGISTER = {}
+SOCIAL_NETWORK_WORKER_REGISTER = {}
 
 class SocialNetwork():
     def __init__(self):
@@ -78,7 +78,7 @@ class SocialNetworkWorker(SaveAndLoad):
             for f in friend.friends_list: 
                 self.add_friend(f)
             msg = f"成功添加{len(friend.friends_list)}个联系人: {str(friend.friends_list)}"
-            yield from update_ui_lastest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=0)
+            yield from update_ui_latest_msg(lastmsg=msg, chatbot=chatbot, history=history, delay=0)
 
 
     def run(self, txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, user_request):
@@ -104,12 +104,12 @@ class SocialNetworkWorker(SaveAndLoad):
         }
 
         try:
-            Explaination = '\n'.join([f'{k}: {v["explain_to_llm"]}' for k, v in self.tools_to_select.items()])
+            Explanation = '\n'.join([f'{k}: {v["explain_to_llm"]}' for k, v in self.tools_to_select.items()])
             class UserSociaIntention(BaseModel):
                 intention_type: str = Field(
                     description=
                         f"The type of user intention. You must choose from {self.tools_to_select.keys()}.\n\n" 
-                        f"Explaination:\n{Explaination}", 
+                        f"Explanation:\n{Explanation}", 
                     default="SocialAdvice"
                 )
             pydantic_cls_instance, err_msg = select_tool(
@@ -118,7 +118,7 @@ class SocialNetworkWorker(SaveAndLoad):
                 pydantic_cls=UserSociaIntention
             )
         except Exception as e:
-            yield from update_ui_lastest_msg(
+            yield from update_ui_latest_msg(
                 lastmsg=f"无法理解用户意图 {err_msg}", 
                 chatbot=chatbot, 
                 history=history, 
@@ -150,10 +150,10 @@ def I人助手(txt, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, 
     # 1. we retrieve worker from global context
     user_name = chatbot.get_user()
     checkpoint_dir=get_log_folder(user_name, plugin_name='experimental_rag')
-    if user_name in SOCIAL_NETWOK_WORKER_REGISTER:
-        social_network_worker = SOCIAL_NETWOK_WORKER_REGISTER[user_name]
+    if user_name in SOCIAL_NETWORK_WORKER_REGISTER:
+        social_network_worker = SOCIAL_NETWORK_WORKER_REGISTER[user_name]
     else:
-        social_network_worker = SOCIAL_NETWOK_WORKER_REGISTER[user_name] = SocialNetworkWorker(
+        social_network_worker = SOCIAL_NETWORK_WORKER_REGISTER[user_name] = SocialNetworkWorker(
             user_name, 
             llm_kwargs, 
             checkpoint_dir=checkpoint_dir, 

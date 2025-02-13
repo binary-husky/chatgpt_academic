@@ -8,7 +8,7 @@ import os
 import time
 from request_llms.com_google import GoogleChatInit
 from toolbox import ChatBotWithCookies
-from toolbox import get_conf, update_ui, update_ui_lastest_msg, have_any_recent_upload_image_files, trimmed_format_exc, log_chat, encode_image
+from toolbox import get_conf, update_ui, update_ui_latest_msg, have_any_recent_upload_image_files, trimmed_format_exc, log_chat, encode_image
 
 proxies, TIMEOUT_SECONDS, MAX_RETRY = get_conf('proxies', 'TIMEOUT_SECONDS', 'MAX_RETRY')
 timeout_bot_msg = '[Local Message] Request timeout. Network error. Please check proxy settings in config.py.' + \
@@ -16,7 +16,7 @@ timeout_bot_msg = '[Local Message] Request timeout. Network error. Please check 
 
 
 def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="", observe_window:list=[],
-                                  console_slience:bool=False):
+                                  console_silence:bool=False):
     # 检查API_KEY
     if get_conf("GEMINI_API_KEY") == "":
         raise ValueError(f"请配置 GEMINI_API_KEY。")
@@ -60,7 +60,7 @@ def predict(inputs:str, llm_kwargs:dict, plugin_kwargs:dict, chatbot:ChatBotWith
 
     # 检查API_KEY
     if get_conf("GEMINI_API_KEY") == "":
-        yield from update_ui_lastest_msg(f"请配置 GEMINI_API_KEY。", chatbot=chatbot, history=history, delay=0)
+        yield from update_ui_latest_msg(f"请配置 GEMINI_API_KEY。", chatbot=chatbot, history=history, delay=0)
         return
 
     # 适配润色区域

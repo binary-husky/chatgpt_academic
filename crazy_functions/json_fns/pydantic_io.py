@@ -102,10 +102,10 @@ class GptJsonIO():
                 logging.info(f'Repairing json：{response}')
                 repair_prompt = self.generate_repair_prompt(broken_json = response, error=repr(e))
                 result = self.generate_output(gpt_gen_fn(repair_prompt, self.format_instructions))
-                logging.info('Repaire json success.')
+                logging.info('Repair json success.')
             except Exception as e:
                 # 没辙了，放弃治疗
-                logging.info('Repaire json fail.')
+                logging.info('Repair json fail.')
                 raise JsonStringError('Cannot repair json.', str(e))
         return result
 

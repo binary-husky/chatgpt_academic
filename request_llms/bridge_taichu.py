@@ -1,6 +1,6 @@
 import time
 import os
-from toolbox import update_ui, get_conf, update_ui_lastest_msg, log_chat
+from toolbox import update_ui, get_conf, update_ui_latest_msg, log_chat
 from toolbox import check_packages, report_exception, have_any_recent_upload_image_files
 from toolbox import ChatBotWithCookies
 
@@ -13,7 +13,7 @@ def validate_key():
     return True
 
 def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="",
-                                  observe_window:list=[], console_slience:bool=False):
+                                  observe_window:list=[], console_silence:bool=False):
     """
         ⭐多线程方法
         函数的说明请见 request_llms/bridge_all.py
@@ -49,7 +49,7 @@ def predict(inputs:str, llm_kwargs:dict, plugin_kwargs:dict, chatbot:ChatBotWith
     yield from update_ui(chatbot=chatbot, history=history)
 
     if validate_key() is False:
-        yield from update_ui_lastest_msg(lastmsg="[Local Message] 请配置ZHIPUAI_API_KEY", chatbot=chatbot, history=history, delay=0)
+        yield from update_ui_latest_msg(lastmsg="[Local Message] 请配置ZHIPUAI_API_KEY", chatbot=chatbot, history=history, delay=0)
         return
 
     if additional_fn is not None:

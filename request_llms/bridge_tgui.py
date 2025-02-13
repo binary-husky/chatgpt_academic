@@ -91,7 +91,7 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
         inputs 是本次问询的输入
         top_p, temperature是chatGPT的内部调优参数
         history 是之前的对话列表（注意无论是inputs还是history，内容太长了都会触发token数量溢出的错误）
-        chatbot 为WebUI中显示的对话列表，修改它，然后yeild出去，可以直接修改对话界面内容
+        chatbot 为WebUI中显示的对话列表，修改它，然后yield出去，可以直接修改对话界面内容
         additional_fn代表点击的哪个按钮，按钮见functional.py
     """
     if additional_fn is not None:
@@ -112,7 +112,7 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
 
 
     mutable = ["", time.time()]
-    def run_coorotine(mutable):
+    def run_coroutine(mutable):
         async def get_result(mutable):
             # "tgui:galactica-1.3b@localhost:7860"
 
@@ -126,7 +126,7 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
                     break
         asyncio.run(get_result(mutable))
 
-    thread_listen = threading.Thread(target=run_coorotine, args=(mutable,), daemon=True)
+    thread_listen = threading.Thread(target=run_coroutine, args=(mutable,), daemon=True)
     thread_listen.start()
 
     while thread_listen.is_alive():
@@ -142,7 +142,7 @@ def predict(inputs, llm_kwargs, plugin_kwargs, chatbot, history=[], system_promp
 
 
 
-def predict_no_ui_long_connection(inputs, llm_kwargs, history, sys_prompt, observe_window, console_slience=False):
+def predict_no_ui_long_connection(inputs, llm_kwargs, history, sys_prompt, observe_window, console_silence=False):
     raw_input = "What I would like to say is the following: " + inputs
     prompt = raw_input
     tgui_say = ""
@@ -151,7 +151,7 @@ def predict_no_ui_long_connection(inputs, llm_kwargs, history, sys_prompt, obser
     addr, port = addr_port.split(':')
 
 
-    def run_coorotine(observe_window):
+    def run_coroutine(observe_window):
         async def get_result(observe_window):
             async for response in run(context=prompt, max_token=llm_kwargs['max_length'],
                                       temperature=llm_kwargs['temperature'],
@@ -162,6 +162,6 @@ def predict_no_ui_long_connection(inputs, llm_kwargs, history, sys_prompt, obser
                     print('exit when no listener')
                     break
         asyncio.run(get_result(observe_window))
-    thread_listen = threading.Thread(target=run_coorotine, args=(observe_window,))
+    thread_listen = threading.Thread(target=run_coroutine, args=(observe_window,))
     thread_listen.start()
     return observe_window[0]

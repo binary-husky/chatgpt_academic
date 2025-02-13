@@ -1,4 +1,4 @@
-from toolbox import update_ui, get_conf, promote_file_to_downloadzone, update_ui_lastest_msg, generate_file_link
+from toolbox import update_ui, get_conf, promote_file_to_downloadzone, update_ui_latest_msg, generate_file_link
 from shared_utils.docker_as_service_api import stream_daas
 from shared_utils.docker_as_service_api import DockerServiceApiComModel
 import random
@@ -25,7 +25,7 @@ def download_video(video_id, only_audio, user_name, chatbot, history):
         status_buf += "\n\n"
         status_buf += "DaaS file attach: \n\n"
         status_buf += str(output_manifest['server_file_attach'])
-        yield from update_ui_lastest_msg(status_buf, chatbot, history)
+        yield from update_ui_latest_msg(status_buf, chatbot, history)
 
     return output_manifest['server_file_attach']
 

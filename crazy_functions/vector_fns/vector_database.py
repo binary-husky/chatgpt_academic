@@ -60,7 +60,7 @@ def similarity_search_with_score_by_vector(
         self, embedding: List[float], k: int = 4
 ) -> List[Tuple[Document, float]]:
 
-    def seperate_list(ls: List[int]) -> List[List[int]]:
+    def separate_list(ls: List[int]) -> List[List[int]]:
         lists = []
         ls1 = [ls[0]]
         for i in range(1, len(ls)):
@@ -82,7 +82,7 @@ def similarity_search_with_score_by_vector(
             continue
         _id = self.index_to_docstore_id[i]
         doc = self.docstore.search(_id)
-        if not self.chunk_conent:
+        if not self.chunk_content:
             if not isinstance(doc, Document):
                 raise ValueError(f"Could not find document for id {_id}, got {doc}")
             doc.metadata["score"] = int(scores[0][j])
@@ -104,12 +104,12 @@ def similarity_search_with_score_by_vector(
                         id_set.add(l)
             if break_flag:
                 break
-    if not self.chunk_conent:
+    if not self.chunk_content:
         return docs
     if len(id_set) == 0 and self.score_threshold > 0:
         return []
     id_list = sorted(list(id_set))
-    id_lists = seperate_list(id_list)
+    id_lists = separate_list(id_list)
     for id_seq in id_lists:
         for id in id_seq:
             if id == id_seq[0]:
@@ -132,7 +132,7 @@ class LocalDocQA:
     embeddings: object = None
     top_k: int = VECTOR_SEARCH_TOP_K
     chunk_size: int = CHUNK_SIZE
-    chunk_conent: bool = True
+    chunk_content: bool = True
     score_threshold: int = VECTOR_SEARCH_SCORE_THRESHOLD
 
     def init_cfg(self,
@@ -209,16 +209,16 @@ class LocalDocQA:
 
     # query      查询内容
     # vs_path    知识库路径
-    # chunk_conent   是否启用上下文关联
+    # chunk_content   是否启用上下文关联
     # score_threshold    搜索匹配score阈值
     # vector_search_top_k   搜索知识库内容条数，默认搜索5条结果
     # chunk_sizes    匹配单段内容的连接上下文长度
-    def get_knowledge_based_conent_test(self, query, vs_path, chunk_conent,
+    def get_knowledge_based_content_test(self, query, vs_path, chunk_content,
                                         score_threshold=VECTOR_SEARCH_SCORE_THRESHOLD,
                                         vector_search_top_k=VECTOR_SEARCH_TOP_K, chunk_size=CHUNK_SIZE,
                                         text2vec=None):
         self.vector_store = FAISS.load_local(vs_path, text2vec)
-        self.vector_store.chunk_conent = chunk_conent
+        self.vector_store.chunk_content = chunk_content
         self.vector_store.score_threshold = score_threshold
         self.vector_store.chunk_size = chunk_size
 
@@ -241,7 +241,7 @@ class LocalDocQA:
 
 
 
-def construct_vector_store(vs_id, vs_path, files, sentence_size, history, one_conent, one_content_segmentation, text2vec):
+def construct_vector_store(vs_id, vs_path, files, sentence_size, history, one_content, one_content_segmentation, text2vec):
     for file in files:
         assert os.path.exists(file), "输入文件不存在：" + file
     import nltk
@@ -297,7 +297,7 @@ class knowledge_archive_interface():
             files=file_manifest,
             sentence_size=100,
             history=[],
-            one_conent="",
+            one_content="",
             one_content_segmentation="",
             text2vec = self.get_chinese_text2vec(),
         )
@@ -319,19 +319,19 @@ class knowledge_archive_interface():
                 files=[],
                 sentence_size=100,
                 history=[],
-                one_conent="",
+                one_content="",
                 one_content_segmentation="",
                 text2vec = self.get_chinese_text2vec(),
             )
         VECTOR_SEARCH_SCORE_THRESHOLD = 0
         VECTOR_SEARCH_TOP_K = 4
         CHUNK_SIZE = 512
-        resp, prompt = self.qa_handle.get_knowledge_based_conent_test(
+        resp, prompt = self.qa_handle.get_knowledge_based_content_test(
             query = txt,
             vs_path = self.kai_path,
             score_threshold=VECTOR_SEARCH_SCORE_THRESHOLD,
             vector_search_top_k=VECTOR_SEARCH_TOP_K,
-            chunk_conent=True,
+            chunk_content=True,
             chunk_size=CHUNK_SIZE,
             text2vec = self.get_chinese_text2vec(),
         )

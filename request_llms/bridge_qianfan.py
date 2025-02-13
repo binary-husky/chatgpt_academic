@@ -121,7 +121,7 @@ def generate_from_baidu_qianfan(inputs, llm_kwargs, history, system_prompt):
 
 
 def predict_no_ui_long_connection(inputs:str, llm_kwargs:dict, history:list=[], sys_prompt:str="",
-                                  observe_window:list=[], console_slience:bool=False):
+                                  observe_window:list=[], console_silence:bool=False):
     """
         ⭐多线程方法
         函数的说明请见 request_llms/bridge_all.py

@@ -1,5 +1,5 @@
 from toolbox import CatchException, report_exception, get_log_folder, gen_time_str
-from toolbox import update_ui, promote_file_to_downloadzone, update_ui_lastest_msg, disable_auto_promotion
+from toolbox import update_ui, promote_file_to_downloadzone, update_ui_latest_msg, disable_auto_promotion
 from toolbox import write_history_to_file, promote_file_to_downloadzone
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive
 from crazy_functions.crazy_utils import request_gpt_model_multi_threads_with_very_awesome_ui_and_high_efficiency

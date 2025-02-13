@@ -113,7 +113,7 @@ def translate_pdf(article_dict, llm_kwargs, chatbot, fp, generated_conclusion_fi
             return [txt]
         else:
             # raw_token_num > TOKEN_LIMIT_PER_FRAGMENT
-            # find a smooth token limit to achieve even seperation
+            # find a smooth token limit to achieve even separation
             count = int(math.ceil(raw_token_num / TOKEN_LIMIT_PER_FRAGMENT))
             token_limit_smooth = raw_token_num // count + count
             return breakdown_text_to_satisfy_token_limit(txt, limit=token_limit_smooth, llm_model=llm_kwargs['llm_model'])

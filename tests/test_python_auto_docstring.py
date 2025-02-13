@@ -9,7 +9,7 @@ from textwrap import dedent
 # TODO: 解决缩进问题
 
 find_function_end_prompt = '''
-Below is a page of code that you need to read. This page may not yet complete, you job is to split this page to sperate functions, class functions etc.
+Below is a page of code that you need to read. This page may not yet complete, you job is to split this page to separate functions, class functions etc.
 - Provide the line number where the first visible function ends.
 - Provide the line number where the next visible function begins.
 - If there are no other functions in this page, you should simply return the line number of the last line.
@@ -58,7 +58,7 @@ OUTPUT:
 
 
 
-revise_funtion_prompt = '''
+revise_function_prompt = '''
 You need to read the following code, and revise the code according to following instructions:
 1. You should analyze the purpose of the functions (if there are any).
 2. You need to add docstring for the provided functions (if there are any).
@@ -147,7 +147,7 @@ class ContextWindowManager():
             history=[],
             sys_prompt="",
             observe_window=[],
-            console_slience=True
+            console_silence=True
         )
 
         def extract_number(text):
@@ -240,15 +240,15 @@ class ContextWindowManager():
     def tag_code(self, fn):
         code = ''.join(fn)
         _, n_indent = self.dedent(code)
-        indent_reminder = "" if n_indent == 0 else "(Reminder: as you can see, this piece of code has indent made up with {n_indent} whitespace, please preseve them in the OUTPUT.)"
+        indent_reminder = "" if n_indent == 0 else "(Reminder: as you can see, this piece of code has indent made up with {n_indent} whitespace, please preserve them in the OUTPUT.)"
         self.llm_kwargs['temperature'] = 0
         result = predict_no_ui_long_connection(
-            inputs=revise_funtion_prompt.format(THE_CODE=code, INDENT_REMINDER=indent_reminder),
+            inputs=revise_function_prompt.format(THE_CODE=code, INDENT_REMINDER=indent_reminder),
             llm_kwargs=self.llm_kwargs,
             history=[],
             sys_prompt="",
             observe_window=[],
-            console_slience=True
+            console_silence=True
         )
 
         def get_code_block(reply):

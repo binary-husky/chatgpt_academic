@@ -1,7 +1,7 @@
 import os
 import threading
 from loguru import logger
-from shared_utils.char_visual_effect import scolling_visual_effect
+from shared_utils.char_visual_effect import scrolling_visual_effect
 from toolbox import update_ui, get_conf, trimmed_format_exc, get_max_token, Singleton
 
 def input_clipping(inputs, history, max_token_limit, return_clip_flags=False):
@@ -256,7 +256,7 @@ def request_gpt_model_multi_threads_with_very_awesome_ui_and_high_efficiency(
                 # 【第一种情况】：顺利完成
                 gpt_say = predict_no_ui_long_connection(
                     inputs=inputs, llm_kwargs=llm_kwargs, history=history,
-                    sys_prompt=sys_prompt, observe_window=mutable[index], console_slience=True
+                    sys_prompt=sys_prompt, observe_window=mutable[index], console_silence=True
                 )
                 mutable[index][2] = "已成功"
                 return gpt_say
@@ -326,7 +326,7 @@ def request_gpt_model_multi_threads_with_very_awesome_ui_and_high_efficiency(
             mutable[thread_index][1] = time.time()
         # 在前端打印些好玩的东西
         for thread_index, _ in enumerate(worker_done):
-            print_something_really_funny = f"[ ...`{scolling_visual_effect(mutable[thread_index][0], scroller_max_len)}`... ]"
+            print_something_really_funny = f"[ ...`{scrolling_visual_effect(mutable[thread_index][0], scroller_max_len)}`... ]"
             observe_win.append(print_something_really_funny)
         # 在前端打印些好玩的东西
         stat_str = ''.join([f'`{mutable[thread_index][2]}`: {obs}\n\n'
@@ -389,11 +389,11 @@ def read_and_clean_pdf_text(fp):
         """
         提取文本块主字体
         """
-        fsize_statiscs = {}
+        fsize_statistics = {}
         for wtf in l['spans']:
-            if wtf['size'] not in fsize_statiscs: fsize_statiscs[wtf['size']] = 0
-            fsize_statiscs[wtf['size']] += len(wtf['text'])
-        return max(fsize_statiscs, key=fsize_statiscs.get)
+            if wtf['size'] not in fsize_statistics: fsize_statistics[wtf['size']] = 0
+            fsize_statistics[wtf['size']] += len(wtf['text'])
+        return max(fsize_statistics, key=fsize_statistics.get)
 
     def ffsize_same(a,b):
         """
@@ -433,11 +433,11 @@ def read_and_clean_pdf_text(fp):
 
         ############################## <第 2 步，获取正文主字体> ##################################
         try:
-            fsize_statiscs = {}
+            fsize_statistics = {}
             for span in meta_span:
-                if span[1] not in fsize_statiscs: fsize_statiscs[span[1]] = 0
-                fsize_statiscs[span[1]] += span[2]
-            main_fsize = max(fsize_statiscs, key=fsize_statiscs.get)
+                if span[1] not in fsize_statistics: fsize_statistics[span[1]] = 0
+                fsize_statistics[span[1]] += span[2]
+            main_fsize = max(fsize_statistics, key=fsize_statistics.get)
             if REMOVE_FOOT_NOTE:
                 give_up_fize_threshold = main_fsize * REMOVE_FOOT_FFSIZE_PERCENT
         except:
@@ -610,9 +610,9 @@ class nougat_interface():
 
 
     def NOUGAT_parse_pdf(self, fp, chatbot, history):
-        from toolbox import update_ui_lastest_msg
+        from toolbox import update_ui_latest_msg
 
-        yield from update_ui_lastest_msg("正在解析论文, 请稍候。进度：正在排队, 等待线程锁...",
+        yield from update_ui_latest_msg("正在解析论文, 请稍候。进度：正在排队, 等待线程锁...",
                                          chatbot=chatbot, history=history, delay=0)
         self.threadLock.acquire()
         import glob, threading, os
@@ -620,7 +620,7 @@ class nougat_interface():
         dst = os.path.join(get_log_folder(plugin_name='nougat'), gen_time_str())
         os.makedirs(dst)
 
-        yield from update_ui_lastest_msg("正在解析论文, 请稍候。进度：正在加载NOUGAT... （提示：首次运行需要花费较长时间下载NOUGAT参数）",
+        yield from update_ui_latest_msg("正在解析论文, 请稍候。进度：正在加载NOUGAT... （提示：首次运行需要花费较长时间下载NOUGAT参数）",
                                          chatbot=chatbot, history=history, delay=0)
         command = ['nougat', '--out', os.path.abspath(dst), os.path.abspath(fp)]
         self.nougat_with_timeout(command, cwd=os.getcwd(), timeout=3600)

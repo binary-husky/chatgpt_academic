@@ -1,4 +1,4 @@
-from toolbox import CatchException, update_ui, ProxyNetworkActivate, update_ui_lastest_msg, get_log_folder, get_user
+from toolbox import CatchException, update_ui, ProxyNetworkActivate, update_ui_latest_msg, get_log_folder, get_user
 from crazy_functions.crazy_utils import request_gpt_model_in_new_thread_with_ui_alive, get_files_from_everything
 from loguru import logger
 install_msg ="""
@@ -42,7 +42,7 @@ def 知识库文件注入(txt, llm_kwargs, plugin_kwargs, chatbot, history, syst
         yield from update_ui(chatbot=chatbot, history=history) # 刷新界面
         # from crazy_functions.crazy_utils import try_install_deps
         # try_install_deps(['zh_langchain==0.2.1', 'pypinyin'], reload_m=['pypinyin', 'zh_langchain'])
-        # yield from update_ui_lastest_msg("安装完成，您可以再次重试。", chatbot, history)
+        # yield from update_ui_latest_msg("安装完成，您可以再次重试。", chatbot, history)
         return
 
     # < --------------------读取文件--------------- >
@@ -95,7 +95,7 @@ def 读取知识库作答(txt, llm_kwargs, plugin_kwargs, chatbot, history, syst
         yield from update_ui(chatbot=chatbot, history=history) # 刷新界面
         # from crazy_functions.crazy_utils import try_install_deps
         # try_install_deps(['zh_langchain==0.2.1', 'pypinyin'], reload_m=['pypinyin', 'zh_langchain'])
-        # yield from update_ui_lastest_msg("安装完成，您可以再次重试。", chatbot, history)
+        # yield from update_ui_latest_msg("安装完成，您可以再次重试。", chatbot, history)
         return
 
     # < -------------------  --------------- >

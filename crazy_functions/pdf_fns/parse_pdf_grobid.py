@@ -1,6 +1,6 @@
 import os
 from toolbox import CatchException, report_exception, get_log_folder, gen_time_str, check_packages
-from toolbox import update_ui, promote_file_to_downloadzone, update_ui_lastest_msg, disable_auto_promotion
+from toolbox import update_ui, promote_file_to_downloadzone, update_ui_latest_msg, disable_auto_promotion
 from toolbox import write_history_to_file, promote_file_to_downloadzone, get_conf, extract_archive
 from crazy_functions.pdf_fns.parse_pdf import parse_pdf, translate_pdf
 

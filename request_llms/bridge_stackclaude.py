@@ -225,7 +225,7 @@ def predict_no_ui_long_connection(
     history=[],
     sys_prompt="",
     observe_window=None,
-    console_slience=False,
+    console_silence=False,
 ):
     """
     多线程方法

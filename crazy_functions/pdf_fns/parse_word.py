@@ -14,17 +14,17 @@ def extract_text_from_files(txt, chatbot, history):
         final_result(list):文本内容
         page_one(list):第一页内容/摘要
         file_manifest(list):文件路径
-        excption(string):需要用户手动处理的信息,如没出错则保持为空
+        exception(string):需要用户手动处理的信息,如没出错则保持为空
     """
 
     final_result = []
     page_one = []
     file_manifest = []
-    excption = ""
+    exception = ""
 
     if txt == "":
         final_result.append(txt)
-        return False, final_result, page_one, file_manifest, excption   #如输入区内容不是文件则直接返回输入区内容
+        return False, final_result, page_one, file_manifest, exception   #如输入区内容不是文件则直接返回输入区内容
 
     #查找输入区内容中的文件
     file_pdf,pdf_manifest,folder_pdf = get_files_from_everything(txt, '.pdf')
@@ -33,20 +33,20 @@ def extract_text_from_files(txt, chatbot, history):
     file_doc,doc_manifest,folder_doc = get_files_from_everything(txt, '.doc')
 
     if file_doc:
-        excption = "word"
-        return False, final_result, page_one, file_manifest, excption
+        exception = "word"
+        return False, final_result, page_one, file_manifest, exception
 
     file_num = len(pdf_manifest) + len(md_manifest) + len(word_manifest)
     if file_num == 0:
         final_result.append(txt)
-        return False, final_result, page_one, file_manifest, excption   #如输入区内容不是文件则直接返回输入区内容
+        return False, final_result, page_one, file_manifest, exception   #如输入区内容不是文件则直接返回输入区内容
 
     if file_pdf:
         try:    # 尝试导入依赖，如果缺少依赖，则给出安装建议
             import fitz
         except:
-            excption = "pdf"
-            return False, final_result, page_one, file_manifest, excption
+            exception = "pdf"
+            return False, final_result, page_one, file_manifest, exception
         for index, fp in enumerate(pdf_manifest):
             file_content, pdf_one = read_and_clean_pdf_text(fp) # （尝试）按照章节切割PDF
             file_content = file_content.encode('utf-8', 'ignore').decode()   # avoid reading non-utf8 chars
@@ -72,8 +72,8 @@ def extract_text_from_files(txt, chatbot, history):
         try:    # 尝试导入依赖，如果缺少依赖，则给出安装建议
             from docx import Document
         except:
-            excption = "word_pip"
-            return False, final_result, page_one, file_manifest, excption
+            exception = "word_pip"
+            return False, final_result, page_one, file_manifest, exception
         for index, fp in enumerate(word_manifest):
             doc = Document(fp)
             file_content = '\n'.join([p.text for p in doc.paragraphs])
@@ -82,4 +82,4 @@ def extract_text_from_files(txt, chatbot, history):
             final_result.append(file_content)
             file_manifest.append(os.path.relpath(fp, folder_word))
 
-    return True, final_result, page_one, file_manifest, excption
+    return True, final_result, page_one, file_manifest, exception
